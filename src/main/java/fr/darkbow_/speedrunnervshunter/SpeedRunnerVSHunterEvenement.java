@@ -174,7 +174,7 @@ public class SpeedRunnerVSHunterEvenement implements Listener {
                 Bukkit.getScheduler().runTaskLater(main.getInstance(), new Runnable() {
                     @Override
                     public void run() {
-                        if(!main.PlayerhasAdvancement(player, "minecraft:end/dragon_breath")){
+                        if(!main.PlayerhasAdvancement(player, "end/kill_dragon")){
                             Bukkit.broadcastMessage("§cLe SpeedRunner " + player.getName() + " est maintenant hors course !");
                             main.getSpeedRunners().put(player, false);
                             if(!main.getSpeedRunners().containsValue(true)){
@@ -194,8 +194,10 @@ public class SpeedRunnerVSHunterEvenement implements Listener {
     @EventHandler
     public void onGotAchievement(PlayerAdvancementDoneEvent event){
         Player player = event.getPlayer();
+        Bukkit.broadcastMessage("Yo : " + event.getAdvancement().getKey().getKey());
+
         if(main.getSpeedRunners().containsKey(player) && main.getSpeedRunners().get(player)){
-            if(main.PlayerhasAdvancement(player, "minecraft:end/dragon_breath")){
+            if(event.getAdvancement().getKey().getKey().equals("end/kill_dragon")){
                 Bukkit.broadcastMessage("§6Les SpeedRunners ont GAGNÉ la CHASSE !");
                 main.title.sendTitle(player, "§6§lBravo " + player.getName() + " !!", "§bTu as fait gagner les SpeedRunners !", 20);
                 for(Map.Entry<Player, Boolean> map : main.getSpeedRunners().entrySet()){
