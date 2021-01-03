@@ -1,4 +1,4 @@
-package fr.darkbow_.vaguesdemonstres;
+package fr.darkbow_.speedrunnervshunter;
 
 import net.minecraft.server.v1_16_R3.*;
 import org.bukkit.Bukkit;

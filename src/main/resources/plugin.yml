@@ -1,9 +1,10 @@
-name: VaguesdeMonstres
+name: SpeedRunnerVSHunter
 author: DarkBow_
 version: 0.1
-main: fr.darkbow_.vaguesdemonstres.VaguesdeMonstres
+main: fr.darkbow_.speedrunnervshunter.SpeedRunnerVSHunter
 commands:
-  vaguesdemonstres:
-    description: Active les vagues de monstres
+  speedrunnervshunter:
+    description: SpeedRunnerVSHunter Plugin
     permission:
-    aliases: [vdm, monsterwaves, mw]
+    aliases: [svh, speedrunner, srvsh]
+api-version: 1.16

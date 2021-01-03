@@ -1,4 +1,4 @@
-package fr.darkbow_.vaguesdemonstres.scoreboard;
+package fr.darkbow_.speedrunnervshunter.scoreboard;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
