@@ -35,18 +35,13 @@ public class CommandSpeedRunnerVSHunter implements CommandExecutor {
                     if(main.isGameStarted()){
                         sender.sendMessage("§cLa chasse a déjà commencé !");
                     } else {
-                        for(World world : Bukkit.getWorlds()){
-                            if(world.getGameRuleValue(GameRule.KEEP_INVENTORY) == null || !world.getGameRuleValue(GameRule.KEEP_INVENTORY)){
-                                main.getWorldskeepInventoryGamerule().add(world);
-                            }
-
-                            world.setGameRuleValue("keepInventory", "true");
-                        }
-
                         main.setGameStarted(true);
                         Bukkit.broadcastMessage("§6§lLa chasse aux SpeedRunners peut maintenant commencer...");
-                        for(Player hunter : main.getHunters().keySet()){
-                            hunter.sendMessage("§bVotre boussole de chasseur pointe basiquement le SpeedRunner le plus proche de vous.\n§bCliquez §b§lGauche §bavec votre boussole si vous voulez pointer vers un SpeedRunner en particulier !");
+                        for(Player pls : Bukkit.getOnlinePlayers()){
+                            if(main.getHunters().containsKey(pls)){
+                                pls.sendMessage("§bVotre boussole de chasseur pointe initialement le SpeedRunner le plus proche de vous.\n§aExécutez la commande §2§l/speedrunner start §apour modifier votre SpeedRunner cible.");
+                            }
+                            main.title.sendTitle(pls, "§b§lSpeedRunner", "§6La Chasse Peut Commencer !!", 20);
                         }
                     }
                 } else {
@@ -58,17 +53,32 @@ public class CommandSpeedRunnerVSHunter implements CommandExecutor {
                 if(sender.hasPermission("speedrunnervshunter.admin")){
                     if(main.isGameStarted()){
                         main.setGameStarted(false);
-                        for(World world : main.getWorldskeepInventoryGamerule()){
-                            world.setGameRuleValue("keepInventory", "false");
-                        }
-                        main.getWorldskeepInventoryGamerule().clear();
-
                         Bukkit.broadcastMessage("§c§lLa chasse a été stoppée par un administrateur !");
+                        for(Player pls : Bukkit.getOnlinePlayers()){
+                            main.title.sendTitle(pls, "§b§lSpeedRunner", "§cChasse Stoppée par un Admin !", 20);
+                        }
                     } else {
                         sender.sendMessage("§cLa chasse n'est pas en cours !");
                     }
                 } else {
                     sender.sendMessage("§cTu n'as pas la permission d'exécuter cette commande.");
+                }
+            }
+
+            if(args[0].equalsIgnoreCase("cible")){
+                if(sender instanceof Player){
+                    Player player = (Player) sender;
+                    if(main.getHunters().containsKey(player)){
+                        if(main.getSpeedRunners().containsValue(true)){
+                            if(main.getHunters().containsKey(player)){
+                                player.openInventory(SpeedRunnerVSHunter.speedrunnersinv);
+                            }
+                        } else {
+                            player.sendMessage("§cAucun SpeedRunner n'est encore en course !");
+                        }
+                    } else {
+                        player.sendMessage("§cTu n'es pas un Chasseur !");
+                    }
                 }
             }
         }

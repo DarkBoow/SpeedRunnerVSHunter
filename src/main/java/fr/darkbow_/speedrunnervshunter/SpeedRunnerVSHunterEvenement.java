@@ -12,7 +12,6 @@ import org.bukkit.event.player.PlayerAdvancementDoneEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.CompassMeta;
-import org.bukkit.scheduler.BukkitScheduler;
 
 import java.util.Map;
 
@@ -27,44 +26,39 @@ public class SpeedRunnerVSHunterEvenement implements Listener {
         if(event.getItem() == null){ return; }
 
         if(event.getItem().getType() == Material.COMPASS){
-            if(event.getAction().toString().contains("LEFT")){
-                if(main.getSpeedRunners().containsValue(true)){
-                    if(main.getHunters().containsKey(player)){
-                        player.openInventory(SpeedRunnerVSHunter.speedrunnersinv);
+            if(main.getHunters().containsKey(player)){
+                Player tracked = null;
+                boolean CibleValide = false;
+                if(main.getSpecialPlayerHunterTrack().get(player)){
+                    if(main.getHunters().get(player) == player){
+                        player.sendMessage("§cTu dois d'abord exécuter la commande §l/speedrunner cible §cpour choisir ta cible, en raison de ton mode de ciblage.");
+                    } else {
+                        if(main.getSpeedRunners().containsKey(main.getHunters().get(player))){
+                            tracked = main.getHunters().get(player);
+                            CibleValide = true;
+                        } else {
+                            player.sendMessage("§cLe joueur " + main.getHunters().get(player).getName() + " que tu avais ciblé n'est plus connecté ou n'est plus SpeedRunner !\n§c§lVeille à choisir le mode de ciblage de Proximité ou Pointer un autre SpeedRunner si ton précédent choix ne redevient pas SpeedRunner ! (en faisant un Clic Gauche avec ta Boussole en main)");
+                            return;
+                        }
                     }
                 } else {
-                    player.sendMessage("§cAucun SpeedRunner n'est encore en course !");
-                }
-            }
-
-            if(event.getAction().toString().contains("RIGHT")){
-                if(main.getHunters().containsKey(player)){
-                    Player tracked = null;
-                    if(main.getSpecialPlayerHunterTrack().get(player)){
-                        if(main.getHunters().get(player) == player){
-                            player.sendMessage("§cTu dois d'abord cliquer gauche avec la boussole pour choisir ta cible, en raison de ton mode de traquage.");
+                    double lastDistance = Double.MAX_VALUE;
+                    for(Player speedrunner : main.getSpeedRunners().keySet()){
+                        if(main.getSpeedRunners().get(speedrunner) && player.getWorld().getEnvironment() == speedrunner.getWorld().getEnvironment()){
+                            CibleValide = true;
+                            double distance = player.getLocation().distance(speedrunner.getLocation());
+                            if(distance < lastDistance){
+                                lastDistance = distance;
+                                tracked = speedrunner;
+                            }
                         } else {
-                            if(main.getSpeedRunners().containsKey(main.getHunters().get(player))){
-                                tracked = main.getHunters().get(player);
-                                player.sendMessage("§aTa nouvelle cible sera maintenant " + tracked.getName() + " !\n§bClique droit avec ta Boussole quand tu souhaiteras actualiser sa direction vers ta nouvelle cible.");
-                            } else {
-                                player.sendMessage("§cLe joueur " + main.getHunters().get(player).getName() + " que tu avais ciblé n'est plus connecté ou n'est plus SpeedRunner !\n§c§lVeille à choisir le mode de ciblage de Proximité ou Pointer un autre SpeedRunner si ton précédent choix ne redevient pas SpeedRunner ! (en faisant un Clic Gauche avec ta Boussole en main)");
-                            }
-                        }
-                    } else {
-                        double lastDistance = Double.MAX_VALUE;
-                        for(Player speedrunner : main.getSpeedRunners().keySet()){
-                            if(main.getSpeedRunners().get(speedrunner)){
-                                double distance = player.getLocation().distance(speedrunner.getLocation());
-                                if(distance < lastDistance){
-                                    lastDistance = distance;
-                                    tracked = speedrunner;
-                                }
-                            }
+                            tracked = speedrunner;
                         }
                     }
+                }
 
-                    if(tracked != null){
+                if(tracked != null){
+                    if(CibleValide){
                         if(player.getWorld().getEnvironment() == tracked.getWorld().getEnvironment()){
                             if(tracked.getWorld().getEnvironment() == World.Environment.NORMAL){
                                 player.setCompassTarget(tracked.getLocation());
@@ -78,9 +72,9 @@ public class SpeedRunnerVSHunterEvenement implements Listener {
                                 event.getItem().setItemMeta(compass);
                             }
                         }
-
-                        player.sendMessage("§aTa boussole pointe vers " + tracked.getName() + ".");
                     }
+
+                    player.sendMessage("§aTa boussole pointe vers §2§l" + tracked.getName() + "§a.");
                 }
             }
         }
@@ -95,25 +89,24 @@ public class SpeedRunnerVSHunterEvenement implements Listener {
             return;
         }
 
-        if(event.getView().getTitle().equals("§b§lChoisis ton Camp")){
+        if(event.getView().getTitle().equals("§9§lChoisis ton Camp")){
             event.setCancelled(true);
             player.closeInventory();
             if(main.isGameStarted()){
                 player.sendMessage("§cLa chasse a déjà commencé, donc tu ne peux plus choisir ton camp.\n§cLa seule manière de choisir ton camp est de stopper la chasse.");
             } else {
-                if(current.getType() == Material.SUGAR && current.getItemMeta().getDisplayName().equals("§b§lSpeedRunner")){
+                if(current.getType() == Material.SUGAR && current.getItemMeta().getDisplayName().equals("§2§lSpeedRunner")){
                     if(main.getSpeedRunners().containsKey(player)){
                         player.sendMessage("§cTu es déjà SpeedRunner.");
                     } else {
                         if(main.getHunters().containsKey(player)){
                             main.getHunters().remove(player);
                             player.sendMessage("§cTu as quitté l'Équipe des Chasseurs.");
+                            player.getInventory().remove(new ItemStack(Material.COMPASS, 1));
                         }
 
                         main.addSpeedRunner(player);
-
                         player.sendMessage("§aTu as rejoins l'Équipe des SpeedRunners !");
-                        player.getInventory().remove(new ItemStack(Material.COMPASS, 1));
                     }
                 }
 
@@ -132,28 +125,32 @@ public class SpeedRunnerVSHunterEvenement implements Listener {
                         player.getInventory().addItem(new ItemStack(Material.COMPASS, 1));
                         if(!main.getSpecialPlayerHunterTrack().containsKey(player)){
                             main.getSpecialPlayerHunterTrack().put(player, false);
-                            player.sendMessage("§6Clique Gauche avec ta Boussole pour choisir une Cible précise, sinon ta boussole traquera le Joueur le plus proche quand tu feras un clic droit avec !");
+                            player.sendMessage("§6Exécutes la commande §b/speedrunner cible §6pour choisir une Cible Précise, sinon ta boussole traquera le Joueur le plus proche §2§lQuand tu cliqueras avec §6!");
                         }
                     }
                 }
             }
         }
 
-        if(event.getView().getTitle().equals("§b§lSpeedRunners")){
+        if(event.getView().getTitle().equals("§2§lSpeedRunners")){
             event.setCancelled(true);
-            if(current.getType() == Material.PLAYER_HEAD){
-                for(ItemStack speedrunners : SpeedRunnerVSHunter.speedrunnersinv.getContents()){
-                    String trackedname = speedrunners.getItemMeta().getDisplayName();
-                    trackedname.replaceFirst("§a", "");
-                    Player tracked = Bukkit.getPlayer(trackedname);
-                    if(tracked == null || !tracked.isOnline()){
-                        return;
+            if(current.getType() == Material.PLAYER_HEAD && main.getHunters().containsKey(player)){
+                if(current.getItemMeta().getDisplayName().equals("§b§lRandom")){
+                    if(main.getSpecialPlayerHunterTrack().get(player)){
+                        main.getSpecialPlayerHunterTrack().put(player, false);
+                        player.sendMessage("§bMode de cible changé à §6§lAléatoire §b!");
+                        player.closeInventory();
                     }
+                } else {
+                    for(Map.Entry<Player, ItemStack> map : main.getSpedRunnerPlayerHeads().entrySet()){
+                        if(current.getItemMeta().getDisplayName().equals(map.getValue().getItemMeta().getDisplayName()) && main.getHunters().get(player) != map.getKey()){
+                            Player tracked = map.getKey();
 
-                    if(main.getSpeedRunners().containsKey(tracked)){
-                        main.getSpecialPlayerHunterTrack().put(player, true);
-                        main.getHunters().put(player, tracked);
-                        player.sendMessage("§aTu as défini " + trackedname + " comme nouvelle cible SpeedRunner !");
+                            main.getSpecialPlayerHunterTrack().put(player, true);
+                            main.getHunters().put(player, tracked);
+                            player.sendMessage("§aTu as défini §2§l" + tracked.getName() + "§a comme nouvelle cible SpeedRunner !");
+                            player.closeInventory();
+                        }
                     }
                 }
             }
@@ -169,24 +166,51 @@ public class SpeedRunnerVSHunterEvenement implements Listener {
     @EventHandler
     public void onPlayerDeath(PlayerDeathEvent event){
         Player player = event.getEntity();
-        if(main.getSpeedRunners().containsKey(player)){
-            if(player.getWorld().getEnvironment() == World.Environment.THE_END){
-                Bukkit.getScheduler().runTaskLater(main.getInstance(), new Runnable() {
-                    @Override
-                    public void run() {
-                        if(!main.PlayerhasAdvancement(player, "end/kill_dragon")){
-                            Bukkit.broadcastMessage("§cLe SpeedRunner " + player.getName() + " est maintenant hors course !");
-                            main.getSpeedRunners().put(player, false);
-                            if(!main.getSpeedRunners().containsValue(true)){
-                                Bukkit.broadcastMessage("§bLes Chasseurs ont Gagné !!");
-                                for(Map.Entry<Player, Boolean> map : main.getSpeedRunners().entrySet()){
-                                    map.setValue(true);
+        if(main.isGameStarted()){
+            if(main.getSpeedRunners().containsKey(player)){
+                if(player.getWorld().getEnvironment() == World.Environment.THE_END){
+                    Bukkit.getScheduler().runTaskLater(main.getInstance(), new Runnable() {
+                        @Override
+                        public void run() {
+                            if(!main.PlayerhasAdvancement(player, "end/kill_dragon")){
+                                Bukkit.broadcastMessage("§cLe SpeedRunner " + player.getName() + " est maintenant hors course !");
+                                main.SpeedRunnerHorsCourse(player);
+                                if(!main.getSpeedRunners().containsValue(true)){
+                                    Bukkit.broadcastMessage("§bLes Chasseurs ont Gagné !!");
+                                    for(Player pls : Bukkit.getOnlinePlayers()){
+                                        if(main.getSpeedRunners().containsKey(pls)){
+                                            main.getSpeedRunners().put(pls, true);
+                                            main.title.sendTitle(pls, "§c§lDÉFAITE", "§bLes Chasseurs ont Gagné...", 20);
+                                        }
+
+                                        if(main.getHunters().containsKey(pls)){
+                                            main.title.sendTitle(pls, "§6§lVICTOIRE", "§bLes Chasseurs ont Gagné !!", 20);
+                                        }
+                                    }
+
+                                    main.setGameStarted(false);
                                 }
-                                main.setGameStarted(false);
                             }
                         }
+                    }, 600L);
+                } else {
+                    main.SpeedRunnerHorsCourse(player);
+                    if(!main.getSpeedRunners().containsValue(true)){
+                        Bukkit.broadcastMessage("§bLes Chasseurs ont Gagné !!");
+                        Player killer = null;
+                        for(Player pls : Bukkit.getOnlinePlayers()){
+                            if(main.getSpeedRunners().containsKey(pls)){
+                                main.getSpeedRunners().put(pls, true);
+                                main.title.sendTitle(pls, "§c§lDÉFAITE", "§bLes Chasseurs ont Gagné...", 20);
+                            }
+
+                            if(main.getHunters().containsKey(pls)){
+                                main.title.sendTitle(pls, "§6§lVICTOIRE", "§bLes Chasseurs ont Gagné !!", 20);
+                            }
+                        }
+                        main.setGameStarted(false);
                     }
-                }, 600L);
+                }
             }
         }
     }
@@ -194,19 +218,22 @@ public class SpeedRunnerVSHunterEvenement implements Listener {
     @EventHandler
     public void onGotAchievement(PlayerAdvancementDoneEvent event){
         Player player = event.getPlayer();
-        Bukkit.broadcastMessage("Yo : " + event.getAdvancement().getKey().getKey());
+        if(main.isGameStarted()){
+            if(main.getSpeedRunners().containsKey(player) && main.getSpeedRunners().get(player)){
+                if(event.getAdvancement().getKey().getKey().equals("end/kill_dragon")){
+                    Bukkit.broadcastMessage("§6Les SpeedRunners ont GAGNÉ la CHASSE !");
+                    for(Player pls : Bukkit.getOnlinePlayers()){
+                        if(main.getSpeedRunners().containsKey(pls)){
+                            main.getSpeedRunners().put(pls, true);
+                            main.title.sendTitle(pls, "§6§lVICTOIRE", "§bLes SpeedRunners ont Gagné !!", 20);
+                        }
 
-        if(main.getSpeedRunners().containsKey(player) && main.getSpeedRunners().get(player)){
-            if(event.getAdvancement().getKey().getKey().equals("end/kill_dragon")){
-                Bukkit.broadcastMessage("§6Les SpeedRunners ont GAGNÉ la CHASSE !");
-                main.title.sendTitle(player, "§6§lBravo " + player.getName() + " !!", "§bTu as fait gagner les SpeedRunners !", 20);
-                for(Map.Entry<Player, Boolean> map : main.getSpeedRunners().entrySet()){
-                    map.setValue(true);
-                    if(map.getKey() != player){
-                        main.title.sendTitle(map.getKey(), "§b§bGG, Tu as Gagné !", "§bLes SpeedRunners ont gagné !", 20);
+                        if(main.getHunters().containsKey(pls)){
+                            main.title.sendTitle(pls, "§c§lDÉFAITE", "§bLes SpeedRunners ont Gagné...", 20);
+                        }
                     }
+                    main.setGameStarted(false);
                 }
-                main.setGameStarted(false);
             }
         }
     }

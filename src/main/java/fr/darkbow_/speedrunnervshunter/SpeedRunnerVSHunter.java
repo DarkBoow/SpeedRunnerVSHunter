@@ -1,5 +1,7 @@
 package fr.darkbow_.speedrunnervshunter;
 
+import com.mojang.authlib.GameProfile;
+import com.mojang.authlib.properties.Property;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -14,6 +16,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.lang.reflect.Field;
 import java.util.*;
 
 public class SpeedRunnerVSHunter extends JavaPlugin {
@@ -26,9 +29,8 @@ public class SpeedRunnerVSHunter extends JavaPlugin {
     private Map<String, ItemStack> itemsByName;
     private Map<Player, ItemStack> hunterscompass;
     private boolean gameStarted = false;
-    public static Inventory speedrunnersinv = Bukkit.createInventory(null, 54, "§b§lSpeedRunners");
-    public static Inventory choixcamp = Bukkit.createInventory(null, 9, "§b§lChoisis ton Camp");
-    private List<World> worldskeepInventoryGamerule;
+    public static Inventory speedrunnersinv = Bukkit.createInventory(null, 54, "§2§lSpeedRunners");
+    public static Inventory choixcamp = Bukkit.createInventory(null, 9, "§9§lChoisis ton Camp");
 
     public SpeedRunnerVSHunter getInstance() {
         return this.instance;
@@ -44,7 +46,6 @@ public class SpeedRunnerVSHunter extends JavaPlugin {
         this.itemsByName = new HashMap<>();
         this.specialplayertrack = new HashMap<>();
         this.hunterscompass = new HashMap<>();
-        this.worldskeepInventoryGamerule = new ArrayList<>();
 
         createInventory();
 
@@ -56,10 +57,6 @@ public class SpeedRunnerVSHunter extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        for(World world : worldskeepInventoryGamerule){
-            world.setGameRuleValue("keepInventory", "false");
-        }
-
         System.out.println("[SpeedRunnerVSHunter] Plugin Désactivé !");
     }
 
@@ -72,8 +69,30 @@ public class SpeedRunnerVSHunter extends JavaPlugin {
     }
 
     public void createInventory(){
-        choixcamp.setItem(3, getItem(Material.SUGAR, 1, (byte)0, "§b§lSpeedRunner", Arrays.asList("", "§7Rejoindre le camp des SpeedRunners"), null, 0, false, null, null));
+        choixcamp.setItem(3, getItem(Material.SUGAR, 1, (byte)0, "§2§lSpeedRunner", Arrays.asList("", "§7Rejoindre le camp des SpeedRunners"), null, 0, false, null, null));
         choixcamp.setItem(5, getItem(Material.IRON_SWORD, 1, (byte)0, "§c§lChasseur", Arrays.asList("", "§7Rejoindre le camp des Chasseurs"), null, 0, false, null, null));
+
+
+        ItemStack randomhead = getItem(Material.PLAYER_HEAD, 1, (byte)0, "§6§lCible la Plus Proche", Arrays.asList("", "§7Votre boussole de Chasseur pointera vers","§7le SpeedRunner le Plus Proche de Vous"), null, 0, false, null, null);
+
+        SkullMeta playerheadmeta = (SkullMeta) randomhead.getItemMeta();
+        playerheadmeta.setOwner("Hynity");
+        playerheadmeta.setDisplayName("§b§lRandom");
+
+        /*GameProfile profile = new GameProfile(UUID.randomUUID(), null);
+        byte[] encodedData = Base64.getEncoder().encode(String.format("{textures:{SKIN:{url:\"%s\"}}}", "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMmNlYjcxM2NkOWNmOTE5MjY0YjYzMWU3MGY1MjhiZDIwYzQzZTc5MjQxNjk1ZDZiZmM5Y2ZjN2RjZDYzZCJ9fX0=").getBytes());
+        profile.getProperties().put("textures", new Property("textures", new String(encodedData)));
+        Field profileField = null;
+        try{
+            profileField = playerheadmeta.getClass().getDeclaredField("profile");
+            profileField.setAccessible(true);
+            profileField.set(playerheadmeta, profile);
+        }catch(NoSuchFieldException | IllegalArgumentException | IllegalAccessException e1){
+            e1.printStackTrace();
+        }*/
+        randomhead.setItemMeta(playerheadmeta);
+
+        speedrunnersinv.setItem(speedrunnersinv.getSize()-1, randomhead);
     }
 
     public void addSpeedRunner(Player player){
@@ -212,12 +231,12 @@ public class SpeedRunnerVSHunter extends JavaPlugin {
         return specialplayertrack;
     }
 
-    public Map<Player, ItemStack> getHunterscompass() {
-        return hunterscompass;
+    public HashMap<Player, ItemStack> getSpedRunnerPlayerHeads() {
+        return speedrunnersplayerheads;
     }
 
-    public List<World> getWorldskeepInventoryGamerule() {
-        return worldskeepInventoryGamerule;
+    public Map<Player, ItemStack> getHunterscompass() {
+        return hunterscompass;
     }
 
     public boolean PlayerhasAdvancement(Player player, String achname){
