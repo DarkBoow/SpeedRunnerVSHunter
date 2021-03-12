@@ -66,7 +66,7 @@ public class CommandSpeedRunnerVSHunter implements CommandExecutor {
                         Bukkit.broadcastMessage("§6§lLa chasse aux SpeedRunners Peut Maintenant §e§lCOMMENCER§6§l...");
                         for(Player pls : Bukkit.getOnlinePlayers()){
                             if(main.getHunters().containsKey(pls)){
-                                pls.sendMessage("§bVotre boussole de chasseur pointe initialement le SpeedRunner le plus proche de vous.\n§aExécutez la commande §2§l/speedrunner start §apour modifier votre SpeedRunner cible.");
+                                pls.sendMessage("§bVotre boussole de chasseur pointe initialement le SpeedRunner le plus proche de vous.\n§aExécutez la commande §2§l/speedrunner cible §apour modifier votre SpeedRunner cible.");
                             }
                             main.title.sendTitle(pls, "§b§lSpeedRunner", "§6La Chasse Peut §e§lCOMMENCER !!", 20);
                         }

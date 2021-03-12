@@ -258,8 +258,7 @@ public class SpeedRunnerVSHunterEvenement implements Listener {
 
             if(main.getHunters().containsKey(player)){
                 if(player.getInventory().contains(Material.COMPASS)){
-                    player.getInventory().remove(new ItemStack(Material.COMPASS, 1));
-                    player.updateInventory();
+                    event.getDrops().remove(new ItemStack(Material.COMPASS, 1));
                 }
             }
         }
