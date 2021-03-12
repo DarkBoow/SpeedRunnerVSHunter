@@ -13,6 +13,7 @@ import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerAdvancementDoneEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.CompassMeta;
 
@@ -253,6 +254,22 @@ public class SpeedRunnerVSHunterEvenement implements Listener {
                         main.setGameStarted(false);
                     }
                 }
+            }
+
+            if(main.getHunters().containsKey(player)){
+                if(player.getInventory().contains(Material.COMPASS)){
+                    player.getInventory().remove(new ItemStack(Material.COMPASS, 1));
+                    player.updateInventory();
+                }
+            }
+        }
+    }
+
+    @EventHandler
+    public void onRespawn(PlayerRespawnEvent event){
+        if(main.isGameStarted()){
+            if(main.getHunters().containsKey(event.getPlayer())){
+                event.getPlayer().getInventory().setItem(0, new ItemStack(Material.COMPASS, 1));
             }
         }
     }

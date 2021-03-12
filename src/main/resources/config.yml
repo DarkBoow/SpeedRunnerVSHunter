@@ -1,3 +1,4 @@
+Play_Permission: false
 OffGameProtection:
   Disable_Player_Damages: true
   Disable_Entity_Damages: true

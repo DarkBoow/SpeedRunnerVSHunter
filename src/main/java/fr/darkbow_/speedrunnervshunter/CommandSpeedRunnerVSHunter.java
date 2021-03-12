@@ -21,11 +21,21 @@ public class CommandSpeedRunnerVSHunter implements CommandExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String msg, String[] args) {
         if(args.length == 0){
-            if(sender instanceof Player){
-                Player player = (Player) sender;
-                player.openInventory(SpeedRunnerVSHunter.choixcamp);
-            } else {
-                sender.sendMessage("§cSeuls les Joueurs peuvent exécuter cette commande !");
+            boolean do_action = true;
+            if(SpeedRunnerVSHunter.needpermission){
+                if(!sender.hasPermission("speedrunnervshunter.player")){
+                    do_action = false;
+                    sender.sendMessage("§cTu n'as pas la permission de rejoindre une partie.");
+                }
+            }
+
+            if(do_action){
+                if(sender instanceof Player){
+                    Player player = (Player) sender;
+                    player.openInventory(SpeedRunnerVSHunter.choixcamp);
+                } else {
+                    sender.sendMessage("§cSeuls les Joueurs peuvent exécuter cette commande !");
+                }
             }
         }
 

@@ -31,6 +31,7 @@ public class SpeedRunnerVSHunter extends JavaPlugin {
     private boolean gameStarted = false;
     public static Inventory speedrunnersinv = Bukkit.createInventory(null, 54, "§2§lSpeedRunners");
     public static Inventory choixcamp = Bukkit.createInventory(null, 9, "§9§lChoisis ton Camp");
+    public static boolean needpermission = false;
 
     public SpeedRunnerVSHunter getInstance() {
         return this.instance;
@@ -49,6 +50,8 @@ public class SpeedRunnerVSHunter extends JavaPlugin {
         this.specialplayertrack = new HashMap<>();
         this.hunterscompass = new HashMap<>();
         this.configurationoptions = new HashMap<>();
+
+        needpermission = getConfig().getBoolean("Play_Permission");
 
         ConfigurationSection GameProtectionSection = getConfig().getConfigurationSection("OffGameProtection");
         for(String protectionvalue : GameProtectionSection.getKeys(false)){
