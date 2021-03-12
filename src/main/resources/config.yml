@@ -1,4 +1,4 @@
-Play_Permission: false
+Play_Permission: false #If set to true, players will need the speedrunnervshunter.player permission to be able to play a Speedrunner VS Hunter Game
 OffGameProtection:
   Disable_Player_Damages: true
   Disable_Entity_Damages: true
