@@ -1,0 +1,8 @@
+OffGameProtection:
+  Disable_Player_Damages: true
+  Disable_Entity_Damages: true
+  Disable_Player_Targets: true
+  Disable_Entity_Targets: true
+  Disable_Loosing_Food: true
+  Disable_DayLight_Cycle: false
+  WorldStartTime: 500 #Set to -1 to disable

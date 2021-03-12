@@ -13,14 +13,5 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: org.spigotmc:spigot:1.16.4-R0.1-SNAPSHOT" level="project" />
     <orderEntry type="library" name="Maven: io.puharesource.mc:TitleManager:2.2.0" level="project" />
-    <orderEntry type="module-library">
-      <library name="Maven: fr.darkbow_:HeadsPluginAPI:2.0.10">
-        <CLASSES>
-          <root url="jar://$MODULE_DIR$/Dependencies/HeadsPluginAPI-2.0.10.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
   </component>
 </module>

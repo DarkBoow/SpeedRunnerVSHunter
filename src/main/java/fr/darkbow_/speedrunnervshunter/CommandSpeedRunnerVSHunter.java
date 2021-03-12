@@ -36,12 +36,29 @@ public class CommandSpeedRunnerVSHunter implements CommandExecutor {
                         sender.sendMessage("§cLa chasse a déjà commencé !");
                     } else {
                         main.setGameStarted(true);
-                        Bukkit.broadcastMessage("§6§lLa chasse aux SpeedRunners peut maintenant commencer...");
+                        if(main.getConfigurationoptions().containsKey("WorldStartTime")){
+                            if(Long.parseLong(main.getConfigurationoptions().get("WorldStartTime")) >= 0){
+                                for(World world : Bukkit.getWorlds()){
+                                    world.setTime(Long.parseLong(String.valueOf(Long.parseLong(main.getConfigurationoptions().get("WorldStartTime")))));
+                                }
+                            }
+                        }
+
+                        if(main.getConfigurationoptions().containsKey("Disable_DayLight_Cycle")){
+                            if(Boolean.parseBoolean(main.getConfigurationoptions().get("Disable_DayLight_Cycle"))){
+                                for(World world : Bukkit.getWorlds()){
+                                    world.setGameRule(GameRule.DO_DAYLIGHT_CYCLE, true);
+                                }
+                            }
+                        }
+
+
+                        Bukkit.broadcastMessage("§6§lLa chasse aux SpeedRunners Peut Maintenant §e§lCOMMENCER§6§l...");
                         for(Player pls : Bukkit.getOnlinePlayers()){
                             if(main.getHunters().containsKey(pls)){
                                 pls.sendMessage("§bVotre boussole de chasseur pointe initialement le SpeedRunner le plus proche de vous.\n§aExécutez la commande §2§l/speedrunner start §apour modifier votre SpeedRunner cible.");
                             }
-                            main.title.sendTitle(pls, "§b§lSpeedRunner", "§6La Chasse Peut Commencer !!", 20);
+                            main.title.sendTitle(pls, "§b§lSpeedRunner", "§6La Chasse Peut §e§lCOMMENCER !!", 20);
                         }
                     }
                 } else {
@@ -53,7 +70,14 @@ public class CommandSpeedRunnerVSHunter implements CommandExecutor {
                 if(sender.hasPermission("speedrunnervshunter.admin")){
                     if(main.isGameStarted()){
                         main.setGameStarted(false);
-                        Bukkit.broadcastMessage("§c§lLa chasse a été stoppée par un administrateur !");
+                        if(main.getConfigurationoptions().containsKey("Disable_DayLight_Cycle")){
+                            if(Boolean.parseBoolean(main.getConfigurationoptions().get("Disable_DayLight_Cycle"))){
+                                for(World world : Bukkit.getWorlds()){
+                                    world.setGameRule(GameRule.DO_DAYLIGHT_CYCLE, false);
+                                }
+                            }
+                        }
+                        Bukkit.broadcastMessage("§cLa chasse a été stoppée par un §4§lAdministrateur §c!");
                         for(Player pls : Bukkit.getOnlinePlayers()){
                             main.title.sendTitle(pls, "§b§lSpeedRunner", "§cChasse Stoppée par un Admin !", 20);
                         }

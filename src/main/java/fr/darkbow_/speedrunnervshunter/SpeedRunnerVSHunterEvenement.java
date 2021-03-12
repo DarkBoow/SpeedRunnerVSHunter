@@ -6,6 +6,9 @@ import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.EntityTargetEvent;
+import org.bukkit.event.entity.FoodLevelChangeEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerAdvancementDoneEvent;
@@ -14,11 +17,51 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.CompassMeta;
 
 import java.util.Map;
+import java.util.Objects;
 
 public class SpeedRunnerVSHunterEvenement implements Listener {
     private SpeedRunnerVSHunter main;
 
     public SpeedRunnerVSHunterEvenement(SpeedRunnerVSHunter vaguesdemonstres){this.main = vaguesdemonstres;}
+
+    @EventHandler
+    public void onEntityDamage(EntityDamageEvent event){
+        if(!main.isGameStarted()){
+            if(event.getEntity() instanceof Player){
+                if(main.getConfigurationoptions().containsKey("Disable_Player_Damages")){
+                    event.setCancelled(Boolean.parseBoolean(main.getConfigurationoptions().get("Disable_Player_Damages")));
+                }
+            } else {
+                if(main.getConfigurationoptions().containsKey("Disable_Entity_Damages")){
+                    event.setCancelled(Boolean.parseBoolean(main.getConfigurationoptions().get("Disable_Entity_Damages")));
+                }
+            }
+        }
+    }
+
+    @EventHandler
+    public void onEntityTarget(EntityTargetEvent event){
+        if(!main.isGameStarted()){
+            if(event.getTarget() instanceof Player){
+                if(main.getConfigurationoptions().containsKey("Disable_Player_Targets")){
+                    event.setCancelled(main.getConfigurationoptions().containsKey("Disable_Player_Targets"));
+                }
+            } else {
+                if(main.getConfigurationoptions().containsKey("Disable_Entity_Targets")){
+                    event.setCancelled(main.getConfigurationoptions().containsKey("Disable_Entity_Targets"));
+                }
+            }
+        }
+    }
+
+    @EventHandler
+    public void onFoodLoose(FoodLevelChangeEvent event){
+        if(!main.isGameStarted()){
+            if(main.getConfigurationoptions().containsKey("Disable_Loosing_Food")){
+                event.setCancelled(main.getConfigurationoptions().containsKey("Disable_Loosing_Food"));
+            }
+        }
+    }
 
     @EventHandler
     public void onPlayerClick(PlayerInteractEvent event){
@@ -135,29 +178,28 @@ public class SpeedRunnerVSHunterEvenement implements Listener {
         if(event.getView().getTitle().equals("§2§lSpeedRunners")){
             event.setCancelled(true);
             if(current.getType() == Material.PLAYER_HEAD && main.getHunters().containsKey(player)){
-                if(current.getItemMeta().getDisplayName().equals("§b§lRandom")){
+                if(Objects.requireNonNull(current.getItemMeta()).getDisplayName().equals("§b§lRandom")){
                     if(main.getSpecialPlayerHunterTrack().get(player)){
                         main.getSpecialPlayerHunterTrack().put(player, false);
                         player.sendMessage("§bMode de cible changé à §6§lAléatoire §b!");
-                        player.closeInventory();
+                    } else {
+                        player.sendMessage("§cMode de cible déjà en §6§lAléatoire §c!");
                     }
+                    player.closeInventory();
                 } else {
                     for(Map.Entry<Player, ItemStack> map : main.getSpedRunnerPlayerHeads().entrySet()){
-                        if(current.getItemMeta().getDisplayName().equals(map.getValue().getItemMeta().getDisplayName()) && main.getHunters().get(player) != map.getKey()){
+                        if(current.isSimilar(map.getValue())){
                             Player tracked = map.getKey();
-
-                            main.getSpecialPlayerHunterTrack().put(player, true);
-                            main.getHunters().put(player, tracked);
-                            player.sendMessage("§aTu as défini §2§l" + tracked.getName() + "§a comme nouvelle cible SpeedRunner !");
+                            if(main.getSpecialPlayerHunterTrack().get(player) && main.getHunters().get(player) == tracked){
+                                player.sendMessage("§cTa cible est déjà définie sur §b§l" + main.getHunters().get(player).getName() + " §c!");
+                            } else {
+                                main.getSpecialPlayerHunterTrack().put(player, true);
+                                main.getHunters().put(player, tracked);
+                                player.sendMessage("§aTu as défini §2§l" + tracked.getName() + "§a comme nouvelle cible SpeedRunner !");
+                            }
                             player.closeInventory();
                         }
                     }
-                }
-            }
-
-            if(current.getType() == Material.STONE){ //Random (choisir l'item ensuite)
-                if(main.getHunters().containsKey(player)){
-                    main.getSpecialPlayerHunterTrack().put(player, false);
                 }
             }
         }

@@ -1,12 +1,12 @@
 package fr.darkbow_.speedrunnervshunter;
 
-import com.mojang.authlib.GameProfile;
-import com.mojang.authlib.properties.Property;
 import org.bukkit.Bukkit;
+import org.bukkit.GameRule;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.advancement.Advancement;
 import org.bukkit.advancement.AdvancementProgress;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
@@ -16,7 +16,6 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.lang.reflect.Field;
 import java.util.*;
 
 public class SpeedRunnerVSHunter extends JavaPlugin {
@@ -28,6 +27,7 @@ public class SpeedRunnerVSHunter extends JavaPlugin {
     private HashMap<Player, ItemStack> speedrunnersplayerheads;
     private Map<String, ItemStack> itemsByName;
     private Map<Player, ItemStack> hunterscompass;
+    private Map<String, String> configurationoptions;
     private boolean gameStarted = false;
     public static Inventory speedrunnersinv = Bukkit.createInventory(null, 54, "§2§lSpeedRunners");
     public static Inventory choixcamp = Bukkit.createInventory(null, 9, "§9§lChoisis ton Camp");
@@ -38,6 +38,8 @@ public class SpeedRunnerVSHunter extends JavaPlugin {
 
     @Override
     public void onEnable() {
+        saveDefaultConfig();
+
         instance = this;
 
         this.speedrunners = new HashMap<>();
@@ -46,6 +48,28 @@ public class SpeedRunnerVSHunter extends JavaPlugin {
         this.itemsByName = new HashMap<>();
         this.specialplayertrack = new HashMap<>();
         this.hunterscompass = new HashMap<>();
+        this.configurationoptions = new HashMap<>();
+
+        ConfigurationSection GameProtectionSection = getConfig().getConfigurationSection("OffGameProtection");
+        for(String protectionvalue : GameProtectionSection.getKeys(false)){
+            configurationoptions.put(protectionvalue, GameProtectionSection.getString(protectionvalue));
+        }
+
+        if(configurationoptions.containsKey("Disable_DayLight_Cycle")){
+            if(Boolean.parseBoolean(configurationoptions.get("Disable_DayLight_Cycle"))){
+                for(World world : Bukkit.getWorlds()){
+                    world.setGameRule(GameRule.DO_DAYLIGHT_CYCLE, false);
+                }
+            }
+        }
+
+        if(configurationoptions.containsKey("WorldStartTime")){
+            if(Long.parseLong(configurationoptions.get("WorldStartTime")) >= 0){
+                for(World world : Bukkit.getWorlds()){
+                    world.setTime(Long.parseLong(String.valueOf(Long.parseLong(configurationoptions.get("WorldStartTime")))));
+                }
+            }
+        }
 
         createInventory();
 
@@ -76,7 +100,7 @@ public class SpeedRunnerVSHunter extends JavaPlugin {
         ItemStack randomhead = getItem(Material.PLAYER_HEAD, 1, (byte)0, "§6§lCible la Plus Proche", Arrays.asList("", "§7Votre boussole de Chasseur pointera vers","§7le SpeedRunner le Plus Proche de Vous"), null, 0, false, null, null);
 
         SkullMeta playerheadmeta = (SkullMeta) randomhead.getItemMeta();
-        playerheadmeta.setOwner("Hynity");
+        /*playerheadmeta.setOwner("Hynity");*/
         playerheadmeta.setDisplayName("§b§lRandom");
 
         /*GameProfile profile = new GameProfile(UUID.randomUUID(), null);
@@ -253,5 +277,9 @@ public class SpeedRunnerVSHunter extends JavaPlugin {
             return true;
         }
         return false;
+    }
+
+    public Map<String, String> getConfigurationoptions() {
+        return configurationoptions;
     }
 }
