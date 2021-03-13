@@ -13,5 +13,7 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: org.spigotmc:spigot:1.16.4-R0.1-SNAPSHOT" level="project" />
     <orderEntry type="library" name="Maven: io.puharesource.mc:TitleManager:2.2.0" level="project" />
+    <orderEntry type="library" name="Maven: org.bstats:bstats-bukkit:2.2.1" level="project" />
+    <orderEntry type="library" name="Maven: org.bstats:bstats-base:2.2.1" level="project" />
   </component>
 </module>

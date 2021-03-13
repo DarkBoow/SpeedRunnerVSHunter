@@ -1,5 +1,6 @@
 package fr.darkbow_.speedrunnervshunter;
 
+import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
 import org.bukkit.GameRule;
 import org.bukkit.Material;
@@ -78,6 +79,11 @@ public class SpeedRunnerVSHunter extends JavaPlugin {
 
         getCommand("speedrunnervshunter").setExecutor(new CommandSpeedRunnerVSHunter(this));
         getServer().getPluginManager().registerEvents(new SpeedRunnerVSHunterEvenement(this), this);
+
+        // All you have to do is adding the following two lines in your onEnable method.
+        // You can find the plugin ids of your plugins on the page https://bstats.org/what-is-my-plugin-id
+        int pluginId = 10640; // <-- Replace with the id of your plugin!
+        Metrics metrics = new Metrics(this, pluginId);
 
         System.out.println("[SpeedRunnerVSHunter] Plugin Activé !!");
     }
