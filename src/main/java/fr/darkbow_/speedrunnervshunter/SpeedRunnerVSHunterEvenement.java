@@ -45,11 +45,11 @@ public class SpeedRunnerVSHunterEvenement implements Listener {
         if(!main.isGameStarted()){
             if(event.getTarget() instanceof Player){
                 if(main.getConfigurationoptions().containsKey("Disable_Player_Targets")){
-                    event.setCancelled(main.getConfigurationoptions().containsKey("Disable_Player_Targets"));
+                    event.setCancelled(Boolean.parseBoolean(main.getConfigurationoptions().get("Disable_Player_Targets")));
                 }
             } else {
                 if(main.getConfigurationoptions().containsKey("Disable_Entity_Targets")){
-                    event.setCancelled(main.getConfigurationoptions().containsKey("Disable_Entity_Targets"));
+                    event.setCancelled(Boolean.parseBoolean(main.getConfigurationoptions().get("Disable_Entity_Targets")));
                 }
             }
         }
@@ -59,7 +59,7 @@ public class SpeedRunnerVSHunterEvenement implements Listener {
     public void onFoodLoose(FoodLevelChangeEvent event){
         if(!main.isGameStarted()){
             if(main.getConfigurationoptions().containsKey("Disable_Loosing_Food")){
-                event.setCancelled(main.getConfigurationoptions().containsKey("Disable_Loosing_Food"));
+                event.setCancelled(Boolean.parseBoolean(main.getConfigurationoptions().get("Disable_Loosing_Food")));
             }
         }
     }
@@ -139,7 +139,7 @@ public class SpeedRunnerVSHunterEvenement implements Listener {
             if(main.isGameStarted()){
                 player.sendMessage("§cLa chasse a déjà commencé, donc tu ne peux plus choisir ton camp.\n§cLa seule manière de choisir ton camp est de stopper la chasse.");
             } else {
-                if(current.getType() == Material.SUGAR && current.getItemMeta().getDisplayName().equals("§2§lSpeedRunner")){
+                if(current.getType() == Material.SUGAR && Objects.requireNonNull(current.getItemMeta()).getDisplayName().equals("§2§lSpeedRunner")){
                     if(main.getSpeedRunners().containsKey(player)){
                         player.sendMessage("§cTu es déjà SpeedRunner.");
                     } else {
@@ -147,24 +147,46 @@ public class SpeedRunnerVSHunterEvenement implements Listener {
                             main.getHunters().remove(player);
                             player.sendMessage("§cTu as quitté l'Équipe des Chasseurs.");
                             player.getInventory().remove(new ItemStack(Material.COMPASS, 1));
+
+                            for(Player pls : Bukkit.getOnlinePlayers()){
+                                if(pls != player){
+                                    pls.sendMessage("§b[SpeedRunner] §6" + player.getName() + "§c a quitté l'Équipe des Chasseurs.");
+                                }
+                            }
                         }
 
                         main.addSpeedRunner(player);
                         player.sendMessage("§aTu as rejoins l'Équipe des SpeedRunners !");
+                        for(Player pls : Bukkit.getOnlinePlayers()){
+                            if(pls != player){
+                                pls.sendMessage("§b[SpeedRunner] §6" + player.getName() + "§a a rejoint l'Équipe des SpeedRunners !");
+                            }
+                        }
                     }
                 }
 
-                if(current.getType() == Material.IRON_SWORD && current.getItemMeta().getDisplayName().equals("§c§lChasseur")){
+                if(current.getType() == Material.IRON_SWORD && Objects.requireNonNull(current.getItemMeta()).getDisplayName().equals("§c§lChasseur")){
                     if(main.getHunters().containsKey(player)){
                         player.sendMessage("§cTu es déjà Chasseur.");
                     } else {
                         if(main.getSpeedRunners().containsKey(player)){
                             main.removeSpeedRunner(player);
                             player.sendMessage("§cTu as quitté l'Équipe des SpeedRunners.");
+
+                            for(Player pls : Bukkit.getOnlinePlayers()){
+                                if(pls != player){
+                                    pls.sendMessage("§b[SpeedRunner] §6" + player.getName() + "§c a quitté l'Équipe des SpeedRunners.");
+                                }
+                            }
                         }
 
                         main.getHunters().put(player, player);
                         player.sendMessage("§aTu as rejoins l'Équipe des Chasseurs !");
+                        for(Player pls : Bukkit.getOnlinePlayers()){
+                            if(pls != player){
+                                pls.sendMessage("§b[SpeedRunner] §6" + player.getName() + "§a a rejoint l'Équipe des Chasseurs !");
+                            }
+                        }
 
                         player.getInventory().addItem(new ItemStack(Material.COMPASS, 1));
                         if(!main.getSpecialPlayerHunterTrack().containsKey(player)){
