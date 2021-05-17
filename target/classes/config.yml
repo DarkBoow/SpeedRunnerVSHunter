@@ -6,4 +6,6 @@ OffGameProtection:
   Disable_Entity_Targets: true
   Disable_Loosing_Food: true
   Disable_DayLight_Cycle: true
+  Disable_Block_Place: true
+  Disable_Block_Break: true
   WorldStartTime: 0 #Set to -1 to disable
