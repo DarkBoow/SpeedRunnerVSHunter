@@ -1,11 +1,14 @@
 package fr.darkbow_.speedrunnervshunter;
 
+import de.tr7zw.nbtapi.NBTItem;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityTargetEvent;
 import org.bukkit.event.entity.FoodLevelChangeEvent;
@@ -23,7 +26,7 @@ import java.util.Objects;
 public class SpeedRunnerVSHunterEvenement implements Listener {
     private SpeedRunnerVSHunter main;
 
-    public SpeedRunnerVSHunterEvenement(SpeedRunnerVSHunter vaguesdemonstres){this.main = vaguesdemonstres;}
+    public SpeedRunnerVSHunterEvenement(SpeedRunnerVSHunter speedrunnervshunter){this.main = speedrunnervshunter;}
 
     @EventHandler
     public void onEntityDamage(EntityDamageEvent event){
@@ -65,11 +68,26 @@ public class SpeedRunnerVSHunterEvenement implements Listener {
     }
 
     @EventHandler
+    public void onBlockPlace(BlockPlaceEvent event){
+        if(!main.isGameStarted()){
+            event.setCancelled(Boolean.parseBoolean(main.getConfigurationoptions().get("Disable_Block_Place")));
+        }
+    }
+
+    @EventHandler
+    public void onBlockBreak(BlockBreakEvent event){
+        if(!main.isGameStarted()){
+            event.setCancelled(Boolean.parseBoolean(main.getConfigurationoptions().get("Disable_Block_Break")));
+        }
+    }
+
+    @EventHandler
     public void onPlayerClick(PlayerInteractEvent event){
         Player player = event.getPlayer();
         if(event.getItem() == null){ return; }
 
         if(event.getItem().getType() == Material.COMPASS){
+            NBTItem nbti = new NBTItem(event.getItem());
             if(main.getHunters().containsKey(player)){
                 Player tracked = null;
                 boolean CibleValide = false;
@@ -105,13 +123,19 @@ public class SpeedRunnerVSHunterEvenement implements Listener {
                     if(CibleValide){
                         if(player.getWorld().getEnvironment() == tracked.getWorld().getEnvironment()){
                             if(tracked.getWorld().getEnvironment() == World.Environment.NORMAL){
+                                if(nbti.hasKey("LodestoneDimension")){
+                                    event.getItem().setItemMeta(null);
+                                }
+
                                 player.setCompassTarget(tracked.getLocation());
                             }
 
                             if(tracked.getWorld().getEnvironment() == World.Environment.NETHER){
-                                CompassMeta compass = (CompassMeta)event.getItem();
-                                compass.setLodestone(tracked.getLocation());
-                                compass.setLodestoneTracked(false);
+                                CompassMeta compass = (CompassMeta)event.getItem().getItemMeta();
+                                if(compass != null){
+                                    compass.setLodestone(tracked.getLocation());
+                                    compass.setLodestoneTracked(false);
+                                }
 
                                 event.getItem().setItemMeta(compass);
                             }
@@ -145,6 +169,9 @@ public class SpeedRunnerVSHunterEvenement implements Listener {
                     } else {
                         if(main.getHunters().containsKey(player)){
                             main.getHunters().remove(player);
+                            player.setPlayerListName(player.getName());
+                            player.setDisplayName(player.getName());
+
                             player.sendMessage("§cTu as quitté l'Équipe des Chasseurs.");
                             player.getInventory().remove(new ItemStack(Material.COMPASS, 1));
 
@@ -181,6 +208,8 @@ public class SpeedRunnerVSHunterEvenement implements Listener {
                         }
 
                         main.getHunters().put(player, player);
+                        player.setPlayerListName("§b[Chasseur] §r" + player.getName());
+                        player.setDisplayName("§b[Chasseur] §r" + player.getName());
                         player.sendMessage("§aTu as rejoins l'Équipe des Chasseurs !");
                         for(Player pls : Bukkit.getOnlinePlayers()){
                             if(pls != player){
@@ -188,7 +217,9 @@ public class SpeedRunnerVSHunterEvenement implements Listener {
                             }
                         }
 
-                        player.getInventory().addItem(new ItemStack(Material.COMPASS, 1));
+                        ItemStack compass = new ItemStack(Material.COMPASS, 1);
+
+                        player.getInventory().addItem(compass);
                         if(!main.getSpecialPlayerHunterTrack().containsKey(player)){
                             main.getSpecialPlayerHunterTrack().put(player, false);
                             player.sendMessage("§6Exécutes la commande §b/speedrunner cible §6pour choisir une Cible Précise, sinon ta boussole traquera le Joueur le plus proche §2§lQuand tu cliqueras avec §6!");
@@ -260,6 +291,7 @@ public class SpeedRunnerVSHunterEvenement implements Listener {
                     }, 600L);
                 } else {
                     main.SpeedRunnerHorsCourse(player);
+                    Bukkit.broadcastMessage("§cLe SpeedRunner " + player.getName() + " est maintenant hors course !");
                     if(!main.getSpeedRunners().containsValue(true)){
                         Bukkit.broadcastMessage("§bLes Chasseurs ont Gagné !!");
                         Player killer = null;
@@ -290,7 +322,9 @@ public class SpeedRunnerVSHunterEvenement implements Listener {
     public void onRespawn(PlayerRespawnEvent event){
         if(main.isGameStarted()){
             if(main.getHunters().containsKey(event.getPlayer())){
-                event.getPlayer().getInventory().setItem(0, new ItemStack(Material.COMPASS, 1));
+                ItemStack compass = new ItemStack(Material.COMPASS, 1);
+
+                event.getPlayer().getInventory().setItem(0, compass);
             }
         }
     }

@@ -17,6 +17,9 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.*;
 
 public class SpeedRunnerVSHunter extends JavaPlugin {
@@ -110,7 +113,10 @@ public class SpeedRunnerVSHunter extends JavaPlugin {
 
         SkullMeta playerheadmeta = (SkullMeta) randomhead.getItemMeta();
         /*playerheadmeta.setOwner("Hynity");*/
-        playerheadmeta.setDisplayName("§b§lRandom");
+        if(playerheadmeta != null){
+            playerheadmeta.setDisplayName("§b§lRandom");
+            randomhead.setItemMeta(playerheadmeta);
+        }
 
         /*GameProfile profile = new GameProfile(UUID.randomUUID(), null);
         byte[] encodedData = Base64.getEncoder().encode(String.format("{textures:{SKIN:{url:\"%s\"}}}", "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMmNlYjcxM2NkOWNmOTE5MjY0YjYzMWU3MGY1MjhiZDIwYzQzZTc5MjQxNjk1ZDZiZmM5Y2ZjN2RjZDYzZCJ9fX0=").getBytes());
@@ -123,7 +129,6 @@ public class SpeedRunnerVSHunter extends JavaPlugin {
         }catch(NoSuchFieldException | IllegalArgumentException | IllegalAccessException e1){
             e1.printStackTrace();
         }*/
-        randomhead.setItemMeta(playerheadmeta);
 
         speedrunnersinv.setItem(speedrunnersinv.getSize()-1, randomhead);
     }
@@ -132,11 +137,16 @@ public class SpeedRunnerVSHunter extends JavaPlugin {
         ItemStack playerhead = new ItemStack(Material.PLAYER_HEAD, 1);
 
         SkullMeta playerheadmeta = (SkullMeta) playerhead.getItemMeta();
-        playerheadmeta.setOwner(player.getName());
-        playerheadmeta.setDisplayName(player.getName());
-        playerheadmeta.setDisplayName("§a" + player.getName());
-        playerhead.setItemMeta(playerheadmeta);
+        if(playerheadmeta != null){
+            playerheadmeta.setOwningPlayer(Bukkit.getPlayer(player.getName()));
+            playerheadmeta.setDisplayName("§a" + player.getName());
+            playerhead.setItemMeta(playerheadmeta);
+        }
+
         this.speedrunners.put(player, true);
+        player.setPlayerListName("§a[SpeedRunner] §r" + player.getName());
+        player.setDisplayName("§a[SpeedRunner] §r" + player.getName());
+
         this.speedrunnersplayerheads.put(player, playerhead);
         speedrunnersinv.addItem(playerhead);
     }
@@ -167,10 +177,14 @@ public class SpeedRunnerVSHunter extends JavaPlugin {
         }
         this.speedrunnersplayerheads.remove(player);
         this.speedrunners.remove(player);
+        player.setPlayerListName(player.getName());
+        player.setDisplayName(player.getName());
     }
 
     public void SpeedRunnerHorsCourse(Player player){
         this.speedrunners.put(player, false);
+        player.setPlayerListName(player.getName());
+        player.setDisplayName(player.getName());
         speedrunnersinv.remove(this.speedrunnersplayerheads.get(player));
         List<ItemStack> items = new ArrayList<>();
         boolean space = false;
@@ -230,24 +244,32 @@ public class SpeedRunnerVSHunter extends JavaPlugin {
         if (material != null) {
             it = new ItemStack(material, number, (short)data);
         }
-        final ItemMeta itM = it.getItemMeta();
 
-        if (displayName != null) {
-            itM.setDisplayName(displayName);
+        ItemMeta itM;
+
+        if(it != null){
+            itM = it.getItemMeta();
+
+            if(itM != null){
+                if(displayName != null) {
+                    itM.setDisplayName(displayName);
+                }
+                if(lore != null) {
+                    itM.setLore(lore);
+                }
+                if(enchname != null) {
+                    itM.addEnchant(enchname, enchpower, enchdisplaying);
+                }
+                if(hideEnchants != null) {
+                    itM.addItemFlags(hideEnchants);
+                }
+                if(itemFlag != null) {
+                    itM.addItemFlags(itemFlag);
+                }
+                it.setItemMeta(itM);
+            }
         }
-        if (lore != null) {
-            itM.setLore((List)lore);
-        }
-        if (enchname != null) {
-            itM.addEnchant(enchname, enchpower, enchdisplaying);
-        }
-        if (hideEnchants != null) {
-            itM.addItemFlags(new ItemFlag[] { hideEnchants });
-        }
-        if (itemFlag != null) {
-            itM.addItemFlags(new ItemFlag[] { itemFlag });
-        }
-        it.setItemMeta(itM);
+
         this.getItems().put(displayName, it);
         return it;
     }
