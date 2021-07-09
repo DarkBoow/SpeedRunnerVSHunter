@@ -9,3 +9,5 @@ OffGameProtection:
   Disable_Block_Place: true
   Disable_Block_Break: true
   WorldStartTime: 0 #Set to -1 to disable
+GameOptions:
+  SpeedRunnersBecomesHuntersAtDeath: false

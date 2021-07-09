@@ -209,9 +209,28 @@ public class SpeedRunnerVSHunter extends JavaPlugin {
             items.clear();
         }
 
-        boolean arespeedrunnersalleliminated = true;
         if(this.speedrunners.containsValue(true)){
-            arespeedrunnersalleliminated = false;
+            if(getConfig().getBoolean("GameOptions.SpeedRunnersBecomesHuntersAtDeath")){
+                speedrunners.remove(player);
+
+                getHunters().put(player, player);
+                player.setPlayerListName("§b[Chasseur] §r" + player.getName());
+                player.setDisplayName("§b[Chasseur] §r" + player.getName());
+                player.sendMessage("§aTu devient Chasseur suite à ta Mort !");
+                for(Player pls : Bukkit.getOnlinePlayers()){
+                    if(pls != player){
+                        pls.sendMessage("§b[SpeedRunner] Le SpeedRunner §6" + player.getName() + "§a est devenu Chasseur suite à sa Mort !");
+                    }
+                }
+
+                ItemStack compass = new ItemStack(Material.COMPASS, 1);
+
+                player.getInventory().addItem(compass);
+                if(!getSpecialPlayerHunterTrack().containsKey(player)){
+                    getSpecialPlayerHunterTrack().put(player, false);
+                    player.sendMessage("§6Exécutes la commande §b/speedrunner cible §6pour choisir une Cible Précise, sinon ta boussole traquera le Joueur le plus proche §2§lQuand tu cliqueras avec §6!");
+                }
+            }
         } else {
             for(Map.Entry<Player, Boolean> map : this.speedrunners.entrySet()){
                 map.setValue(true);

@@ -290,8 +290,8 @@ public class SpeedRunnerVSHunterEvenement implements Listener {
                         }
                     }, 600L);
                 } else {
-                    main.SpeedRunnerHorsCourse(player);
                     Bukkit.broadcastMessage("§cLe SpeedRunner " + player.getName() + " est maintenant hors course !");
+                    main.SpeedRunnerHorsCourse(player);
                     if(!main.getSpeedRunners().containsValue(true)){
                         Bukkit.broadcastMessage("§bLes Chasseurs ont Gagné !!");
                         Player killer = null;
