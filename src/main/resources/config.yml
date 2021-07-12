@@ -11,3 +11,5 @@ OffGameProtection:
   WorldStartTime: 0 #Set to -1 to disable
 GameOptions:
   SpeedRunnersBecomesHuntersAtDeath: false
+  #If the option above is set to false, the option below will be checked
+  SpectatorAfterSpeedRunnerRealDeath: true

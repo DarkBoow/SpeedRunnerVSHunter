@@ -1,10 +1,7 @@
 package fr.darkbow_.speedrunnervshunter;
 
 import org.bstats.bukkit.Metrics;
-import org.bukkit.Bukkit;
-import org.bukkit.GameRule;
-import org.bukkit.Material;
-import org.bukkit.World;
+import org.bukkit.*;
 import org.bukkit.advancement.Advancement;
 import org.bukkit.advancement.AdvancementProgress;
 import org.bukkit.configuration.ConfigurationSection;
@@ -182,6 +179,10 @@ public class SpeedRunnerVSHunter extends JavaPlugin {
     }
 
     public void SpeedRunnerHorsCourse(Player player){
+        if(getConfig().getBoolean("GameOptions.SpectatorAfterSpeedRunnerRealDeath")){
+            player.setGameMode(GameMode.SPECTATOR);
+        }
+
         this.speedrunners.put(player, false);
         player.setPlayerListName(player.getName());
         player.setDisplayName(player.getName());
