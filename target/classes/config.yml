@@ -8,6 +8,7 @@ OffGameProtection:
   Disable_DayLight_Cycle: true
   Disable_Block_Place: true
   Disable_Block_Break: true
+  Disable_OpenChest: true
   WorldStartTime: 0 #Set to -1 to disable
 GameOptions:
   SpeedRunnersBecomesHuntersAtDeath: false
