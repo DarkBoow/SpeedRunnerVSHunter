@@ -7,8 +7,10 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.Objects;
+
 public class CommandSpeedRunnerVSHunter implements CommandExecutor {
-    private SpeedRunnerVSHunter main;
+    private final SpeedRunnerVSHunter main;
     
     public CommandSpeedRunnerVSHunter(SpeedRunnerVSHunter vaguesdemonstres){this.main = vaguesdemonstres;}
 
@@ -56,12 +58,19 @@ public class CommandSpeedRunnerVSHunter implements CommandExecutor {
                             }
                         }
 
-                        if(main.getConfig().getDouble("OffGameProtection.StartWorldBorder") >= 0.0){
+                        if(Objects.requireNonNull(main.getConfig().getString("OffGameProtection.StartWorldBorder")).equalsIgnoreCase("SpawnRadiusGamerule")){
                             for(World world : Bukkit.getWorlds()){
-                                world.getWorldBorder().setSize(60000000);
+                                world.getWorldBorder().setSize(Objects.requireNonNull(world.getGameRuleValue(GameRule.SPAWN_RADIUS)).doubleValue());
+                            }
+                        } else {
+                            double bordersize = Double.parseDouble(Objects.requireNonNull(main.getConfig().getString("OffGameProtection.StartWorldBorder")));
+
+                            if(bordersize >= 0.0){
+                                for(World world : Bukkit.getWorlds()){
+                                    world.getWorldBorder().setSize(60000000);
+                                }
                             }
                         }
-
 
                         Bukkit.broadcastMessage("§6§lLa chasse aux SpeedRunners Peut Maintenant §e§lCOMMENCER§6§l...");
                         for(Player pls : Bukkit.getOnlinePlayers()){

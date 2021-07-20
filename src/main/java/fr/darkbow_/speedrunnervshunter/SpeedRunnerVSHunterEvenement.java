@@ -26,7 +26,7 @@ import java.util.Map;
 import java.util.Objects;
 
 public class SpeedRunnerVSHunterEvenement implements Listener {
-    private SpeedRunnerVSHunter main;
+    private final SpeedRunnerVSHunter main;
 
     public SpeedRunnerVSHunterEvenement(SpeedRunnerVSHunter speedrunnervshunter){this.main = speedrunnervshunter;}
 
@@ -278,27 +278,24 @@ public class SpeedRunnerVSHunterEvenement implements Listener {
         if(main.isGameStarted()){
             if(main.getSpeedRunners().containsKey(player)){
                 if(player.getWorld().getEnvironment() == World.Environment.THE_END){
-                    Bukkit.getScheduler().runTaskLater(main.getInstance(), new Runnable() {
-                        @Override
-                        public void run() {
-                            if(!main.PlayerhasAdvancement(player, "end/kill_dragon")){
-                                Bukkit.broadcastMessage("§cLe SpeedRunner " + player.getName() + " est maintenant hors course !");
-                                main.SpeedRunnerHorsCourse(player);
-                                if(!main.getSpeedRunners().containsValue(true)){
-                                    Bukkit.broadcastMessage("§bLes Chasseurs ont Gagné !!");
-                                    for(Player pls : Bukkit.getOnlinePlayers()){
-                                        if(main.getSpeedRunners().containsKey(pls)){
-                                            main.getSpeedRunners().put(pls, true);
-                                            main.title.sendTitle(pls, "§c§lDÉFAITE", "§bLes Chasseurs ont Gagné...", 20);
-                                        }
-
-                                        if(main.getHunters().containsKey(pls)){
-                                            main.title.sendTitle(pls, "§6§lVICTOIRE", "§bLes Chasseurs ont Gagné !!", 20);
-                                        }
+                    Bukkit.getScheduler().runTaskLater(main.getInstance(), () -> {
+                        if(!main.PlayerhasAdvancement(player, "end/kill_dragon")){
+                            Bukkit.broadcastMessage("§cLe SpeedRunner " + player.getName() + " est maintenant hors course !");
+                            main.SpeedRunnerHorsCourse(player);
+                            if(!main.getSpeedRunners().containsValue(true)){
+                                Bukkit.broadcastMessage("§bLes Chasseurs ont Gagné !!");
+                                for(Player pls : Bukkit.getOnlinePlayers()){
+                                    if(main.getSpeedRunners().containsKey(pls)){
+                                        main.getSpeedRunners().put(pls, true);
+                                        main.title.sendTitle(pls, "§c§lDÉFAITE", "§bLes Chasseurs ont Gagné...", 20);
                                     }
 
-                                    main.setGameStarted(false);
+                                    if(main.getHunters().containsKey(pls)){
+                                        main.title.sendTitle(pls, "§6§lVICTOIRE", "§bLes Chasseurs ont Gagné !!", 20);
+                                    }
                                 }
+
+                                main.setGameStarted(false);
                             }
                         }
                     }, 600L);
@@ -307,7 +304,6 @@ public class SpeedRunnerVSHunterEvenement implements Listener {
                     main.SpeedRunnerHorsCourse(player);
                     if(!main.getSpeedRunners().containsValue(true)){
                         Bukkit.broadcastMessage("§bLes Chasseurs ont Gagné !!");
-                        Player killer = null;
                         for(Player pls : Bukkit.getOnlinePlayers()){
                             if(main.getSpeedRunners().containsKey(pls)){
                                 main.getSpeedRunners().put(pls, true);

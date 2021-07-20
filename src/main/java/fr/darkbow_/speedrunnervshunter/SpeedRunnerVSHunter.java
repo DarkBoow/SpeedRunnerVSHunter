@@ -14,9 +14,6 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.*;
 
 public class SpeedRunnerVSHunter extends JavaPlugin {
@@ -27,7 +24,6 @@ public class SpeedRunnerVSHunter extends JavaPlugin {
     private HashMap<Player, Boolean> specialplayertrack;
     private HashMap<Player, ItemStack> speedrunnersplayerheads;
     private Map<String, ItemStack> itemsByName;
-    private Map<Player, ItemStack> hunterscompass;
     private Map<String, String> configurationoptions;
     private boolean gameStarted = false;
     public static Inventory speedrunnersinv = Bukkit.createInventory(null, 54, "§2§lSpeedRunners");
@@ -49,14 +45,15 @@ public class SpeedRunnerVSHunter extends JavaPlugin {
         this.speedrunnersplayerheads = new HashMap<>();
         this.itemsByName = new HashMap<>();
         this.specialplayertrack = new HashMap<>();
-        this.hunterscompass = new HashMap<>();
         this.configurationoptions = new HashMap<>();
 
         needpermission = getConfig().getBoolean("Play_Permission");
 
         ConfigurationSection GameProtectionSection = getConfig().getConfigurationSection("OffGameProtection");
-        for(String protectionvalue : GameProtectionSection.getKeys(false)){
-            configurationoptions.put(protectionvalue, GameProtectionSection.getString(protectionvalue));
+        if(GameProtectionSection != null){
+            for(String protectionvalue : GameProtectionSection.getKeys(false)){
+                configurationoptions.put(protectionvalue, GameProtectionSection.getString(protectionvalue));
+            }
         }
 
         if(configurationoptions.containsKey("Disable_DayLight_Cycle")){
@@ -78,14 +75,20 @@ public class SpeedRunnerVSHunter extends JavaPlugin {
         createInventory();
 
         for(World world : Bukkit.getWorlds()){
-            if(getConfig().getDouble("OffGameProtection.StartWorldBorder") >= 0.0){
-                world.getWorldBorder().setSize(getConfig().getDouble("OffGameProtection.StartWorldBorder"));
+            if(Objects.requireNonNull(getConfig().getString("OffGameProtection.StartWorldBorder")).equalsIgnoreCase("SpawnRadiusGamerule")){
+                world.getWorldBorder().setSize(Objects.requireNonNull(world.getGameRuleValue(GameRule.SPAWN_RADIUS)).doubleValue());
             } else {
-                world.getWorldBorder().setSize(60000000);
+                double bordersize = getConfig().getDouble("OffGameProtection.StartWorldBorder");
+
+                if(bordersize >= 0.0){
+                    world.getWorldBorder().setSize(getConfig().getDouble("OffGameProtection.StartWorldBorder"));
+                } else {
+                    world.getWorldBorder().setSize(60000000);
+                }
             }
         }
 
-        getCommand("speedrunnervshunter").setExecutor(new CommandSpeedRunnerVSHunter(this));
+        Objects.requireNonNull(getCommand("speedrunnervshunter")).setExecutor(new CommandSpeedRunnerVSHunter(this));
         getServer().getPluginManager().registerEvents(new SpeedRunnerVSHunterEvenement(this), this);
 
         // All you have to do is adding the following two lines in your onEnable method.
@@ -270,7 +273,7 @@ public class SpeedRunnerVSHunter extends JavaPlugin {
     public ItemStack getItem(final Material material, final int number, final byte data, final String displayName, final List<String> lore, final Enchantment enchname, final int enchpower, final boolean enchdisplaying, final ItemFlag hideEnchants, final ItemFlag itemFlag) {
         ItemStack it = null;
         if (material != null) {
-            it = new ItemStack(material, number, (short)data);
+            it = new ItemStack(material, number, data);
         }
 
         ItemMeta itM;
@@ -318,10 +321,6 @@ public class SpeedRunnerVSHunter extends JavaPlugin {
         return speedrunnersplayerheads;
     }
 
-    public Map<Player, ItemStack> getHunterscompass() {
-        return hunterscompass;
-    }
-
     public boolean PlayerhasAdvancement(Player player, String achname){
         Advancement ach = null;
         for (Iterator<Advancement> iter = Bukkit.getServer().advancementIterator(); iter.hasNext(); ) {
@@ -331,10 +330,12 @@ public class SpeedRunnerVSHunter extends JavaPlugin {
                 break;
             }
         }
-        AdvancementProgress prog = player.getAdvancementProgress(ach);
-        if (prog.isDone()){
-            return true;
+
+        if(ach != null){
+            AdvancementProgress prog = player.getAdvancementProgress(ach);
+            return prog.isDone();
         }
+
         return false;
     }
 
