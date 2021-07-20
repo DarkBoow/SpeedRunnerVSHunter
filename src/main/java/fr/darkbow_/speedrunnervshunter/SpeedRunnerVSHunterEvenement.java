@@ -7,6 +7,7 @@ import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
@@ -86,7 +87,7 @@ public class SpeedRunnerVSHunterEvenement implements Listener {
         Player player = event.getPlayer();
 
         if(!main.isGameStarted()){
-            if(event.getClickedBlock() != null && event.getClickedBlock().getType() == Material.CHEST || Objects.requireNonNull(event.getClickedBlock()).getType() == Material.CHEST_MINECART || event.getClickedBlock().getType() == Material.ENDER_CHEST || event.getClickedBlock().getType() == Material.SHULKER_BOX){
+            if(event.getAction() == Action.RIGHT_CLICK_BLOCK && event.getClickedBlock() != null && event.getClickedBlock().getType() == Material.CHEST || event.getClickedBlock().getType() == Material.CHEST_MINECART || event.getClickedBlock().getType() == Material.ENDER_CHEST || event.getClickedBlock().getType() == Material.SHULKER_BOX){
                 event.setCancelled(main.getConfig().getBoolean("OffGameProtection.Disable_OpenChest"));
             }
         }
