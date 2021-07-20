@@ -379,7 +379,7 @@ public class SpeedRunnerVSHunterEvenement implements Listener {
 
                     if(compasscount == 0){
                         event.setCancelled(true);
-                        event.getPlayer().sendMessage("§cTu ne peux pas jeter ta dernière boussole en laissant l'option §3§lDisable_Item_Drop §aActivée§c, désolé.");
+                        event.getPlayer().sendMessage("§cTu ne peux pas jeter ta dernière boussole si l'option §3§lDisable_Item_Drop §creste §aActivée §c!");
                     }
                 }
             }
