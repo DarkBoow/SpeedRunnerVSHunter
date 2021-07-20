@@ -87,9 +87,17 @@ public class SpeedRunnerVSHunterEvenement implements Listener {
         Player player = event.getPlayer();
 
         if(!main.isGameStarted()){
-            if(event.getAction() == Action.RIGHT_CLICK_BLOCK && event.getClickedBlock() != null && event.getClickedBlock().getType() == Material.CHEST || event.getClickedBlock().getType() == Material.CHEST_MINECART || event.getClickedBlock().getType() == Material.ENDER_CHEST || event.getClickedBlock().getType() == Material.SHULKER_BOX){
-                event.setCancelled(main.getConfig().getBoolean("OffGameProtection.Disable_OpenChest"));
+            if(event.getAction() == Action.RIGHT_CLICK_BLOCK){
+                if(event.getClickedBlock() != null){
+                    if(event.getClickedBlock().getType() == Material.CHEST || event.getClickedBlock().getType() == Material.CHEST_MINECART || event.getClickedBlock().getType() == Material.ENDER_CHEST || event.getClickedBlock().getType() == Material.SHULKER_BOX){
+                        event.setCancelled(main.getConfig().getBoolean("OffGameProtection.Disable_OpenChest"));
+                    }
+                }
             }
+
+            /*if(event.getAction() == Action.RIGHT_CLICK_BLOCK && event.getClickedBlock() != null && event.getClickedBlock().getType() == Material.CHEST || event.getClickedBlock().getType() == Material.CHEST_MINECART || event.getClickedBlock().getType() == Material.ENDER_CHEST || event.getClickedBlock().getType() == Material.SHULKER_BOX){
+                event.setCancelled(main.getConfig().getBoolean("OffGameProtection.Disable_OpenChest"));
+            }*/
         }
 
         if(event.getItem() == null){ return; }
