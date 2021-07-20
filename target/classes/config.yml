@@ -9,6 +9,7 @@ OffGameProtection:
   Disable_Block_Place: true
   Disable_Block_Break: true
   Disable_OpenChest: true
+  Disable_Item_Drop: true
   WorldStartTime: 0 #Set to -1 to disable
 GameOptions:
   SpeedRunnersBecomesHuntersAtDeath: false
