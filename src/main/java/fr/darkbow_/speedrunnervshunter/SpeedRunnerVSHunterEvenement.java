@@ -16,6 +16,7 @@ import org.bukkit.event.entity.FoodLevelChangeEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerAdvancementDoneEvent;
+import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.inventory.ItemStack;
@@ -361,6 +362,31 @@ public class SpeedRunnerVSHunterEvenement implements Listener {
                     main.setGameStarted(false);
                 }
             }
+        }
+    }
+
+    @EventHandler
+    public void onDropItem(PlayerDropItemEvent event){
+        if(main.isGameStarted() && main.getConfig().getBoolean("OffGameProtection.Disable_Item_Drop")){
+            if(main.getHunters().containsKey(event.getPlayer())){
+                if(event.getItemDrop().getItemStack().getType() == Material.COMPASS){
+                    int compasscount = 0;
+                    for(ItemStack it : event.getPlayer().getInventory().getContents()){
+                        if(it != null && it.getType() == Material.COMPASS){
+                            compasscount += it.getAmount();
+                        }
+                    }
+
+                    if(compasscount == 0){
+                        event.setCancelled(true);
+                        event.getPlayer().sendMessage("§cTu ne peux pas jeter ta dernière boussole en laissant l'option §6§lDisable_Item_Drop §aActivée§c, désolé.");
+                    }
+                }
+            }
+        }
+
+        if(!main.isGameStarted()){
+            event.setCancelled(main.getConfig().getBoolean("OffGameProtection.Disable_Item_Drop"));
         }
     }
 }
