@@ -56,6 +56,12 @@ public class CommandSpeedRunnerVSHunter implements CommandExecutor {
                             }
                         }
 
+                        if(main.getConfig().getDouble("OffGameProtection.StartWorldBorder") >= 0.0){
+                            for(World world : Bukkit.getWorlds()){
+                                world.getWorldBorder().setSize(60000000);
+                            }
+                        }
+
 
                         Bukkit.broadcastMessage("§6§lLa chasse aux SpeedRunners Peut Maintenant §e§lCOMMENCER§6§l...");
                         for(Player pls : Bukkit.getOnlinePlayers()){

@@ -77,6 +77,14 @@ public class SpeedRunnerVSHunter extends JavaPlugin {
 
         createInventory();
 
+        for(World world : Bukkit.getWorlds()){
+            if(getConfig().getDouble("OffGameProtection.StartWorldBorder") >= 0.0){
+                world.getWorldBorder().setSize(getConfig().getDouble("OffGameProtection.StartWorldBorder"));
+            } else {
+                world.getWorldBorder().setSize(60000000);
+            }
+        }
+
         getCommand("speedrunnervshunter").setExecutor(new CommandSpeedRunnerVSHunter(this));
         getServer().getPluginManager().registerEvents(new SpeedRunnerVSHunterEvenement(this), this);
 
