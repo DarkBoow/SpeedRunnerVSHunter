@@ -58,18 +58,8 @@ public class CommandSpeedRunnerVSHunter implements CommandExecutor {
                             }
                         }
 
-                        if(Objects.requireNonNull(main.getConfig().getString("OffGameProtection.StartWorldBorder")).equalsIgnoreCase("SpawnRadiusGamerule")){
-                            for(World world : Bukkit.getWorlds()){
-                                world.getWorldBorder().setSize(Objects.requireNonNull(world.getGameRuleValue(GameRule.SPAWN_RADIUS)).doubleValue());
-                            }
-                        } else {
-                            double bordersize = Double.parseDouble(Objects.requireNonNull(main.getConfig().getString("OffGameProtection.StartWorldBorder")));
-
-                            if(bordersize >= 0.0){
-                                for(World world : Bukkit.getWorlds()){
-                                    world.getWorldBorder().setSize(60000000);
-                                }
-                            }
+                        for(World world : Bukkit.getWorlds()){
+                            world.getWorldBorder().setSize(60000000);
                         }
 
                         Bukkit.broadcastMessage("§6§lLa chasse aux SpeedRunners Peut Maintenant §e§lCOMMENCER§6§l...");
