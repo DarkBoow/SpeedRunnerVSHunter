@@ -22,7 +22,7 @@ public class CommandSpeedRunnerVSHunter implements CommandExecutor {
             if(SpeedRunnerVSHunter.needpermission){
                 if(!sender.hasPermission("speedrunnervshunter.player")){
                     do_action = false;
-                    sender.sendMessage(Objects.requireNonNull(main.getMessagesConfig().getString("DontHavePermissionToPlay")).replace("&", "§"));
+                    sender.sendMessage(Objects.requireNonNull(main.getLanguageConfig().getString("DontHavePermissionToPlay")).replace("&", "§"));
                 }
             }
 
@@ -31,7 +31,7 @@ public class CommandSpeedRunnerVSHunter implements CommandExecutor {
                     Player player = (Player) sender;
                     player.openInventory(SpeedRunnerVSHunter.choixcamp);
                 } else {
-                    sender.sendMessage(Objects.requireNonNull(main.getMessagesConfig().getString("CommandRequiresToBeAPlayer")).replace("&", "§"));
+                    sender.sendMessage(Objects.requireNonNull(main.getLanguageConfig().getString("CommandRequiresToBeAPlayer")).replace("&", "§"));
                 }
             }
         }
@@ -40,7 +40,7 @@ public class CommandSpeedRunnerVSHunter implements CommandExecutor {
             if(args[0].equalsIgnoreCase("start")){
                 if(sender.hasPermission("speedrunnervshunter.admin")){
                     if(main.isGameStarted()){
-                        sender.sendMessage("§cLa chasse a déjà commencé !");
+                        sender.sendMessage(Objects.requireNonNull(main.getLanguageConfig().getString("TheGameHasAlreadyBegun")).replace("&", "§"));
                     } else {
                         main.setGameStarted(true);
                         if(main.getConfigurationoptions().containsKey("WorldStartTime")){
@@ -63,13 +63,13 @@ public class CommandSpeedRunnerVSHunter implements CommandExecutor {
                             world.getWorldBorder().setSize(60000000);
                         }
 
-                        Bukkit.broadcastMessage("§6§lLa chasse aux SpeedRunners Peut Maintenant §e§lCOMMENCER§6§l...");
+                        Bukkit.broadcastMessage(Objects.requireNonNull(main.getLanguageConfig().getString("TheGameHasStarted")).replace("&", "§"));
                         for(Player pls : Bukkit.getOnlinePlayers()){
                             if(main.getHunters().containsKey(pls)){
-                                pls.sendMessage("§bVotre boussole de chasseur pointe initialement le SpeedRunner le plus proche de vous.\n§aExécutez la commande §2§l/speedrunner cible §apour modifier votre SpeedRunner cible.");
+                                pls.sendMessage(Objects.requireNonNull(main.getLanguageConfig().getString("HuntersCompassInfo")).replace("&", "§"));
                             }
 
-                            TitleApi.sendTitle(pls, "§b§lSpeedRunner", "§6La Chasse Peut §e§lCOMMENCER !!", 20, 20, 20);
+                            TitleApi.sendTitle(pls, Objects.requireNonNull(main.getLanguageConfig().getString("StartingGameTitle.Title")).replace("&", "§"), Objects.requireNonNull(main.getLanguageConfig().getString("StartingGameTitle.SubTitle")).replace("&", "§"), main.getLanguageConfig().getInt("StartingGameTitle.FadeIn"), main.getLanguageConfig().getInt("StartingGameTitle.Stay"), main.getLanguageConfig().getInt("StartingGameTitle.FadeOut"));
                         }
 
                         if(main.getConfig().getBoolean("GameOptions.AssassinsMode")){
@@ -78,7 +78,7 @@ public class CommandSpeedRunnerVSHunter implements CommandExecutor {
                         }
                     }
                 } else {
-                    sender.sendMessage("§cTu n'as pas la permission d'exécuter cette commande.");
+                    sender.sendMessage(Objects.requireNonNull(main.getLanguageConfig().getString("YouCantExecuteThatCommand")).replace("&", "§"));
                 }
             }
 
@@ -93,23 +93,23 @@ public class CommandSpeedRunnerVSHunter implements CommandExecutor {
                                 }
                             }
                         }
-                        Bukkit.broadcastMessage("§cLa chasse a été stoppée par un §4§lAdministrateur §c!");
+                        Bukkit.broadcastMessage(Objects.requireNonNull(main.getLanguageConfig().getString("AdminStoppedGame")).replace("&", "§"));
                         for(Player pls : Bukkit.getOnlinePlayers()){
-                            TitleApi.sendTitle(pls, "§b§lSpeedRunner", "§cChasse Stoppée par un Admin !", 20, 20, 20);
+                            TitleApi.sendTitle(pls, Objects.requireNonNull(main.getLanguageConfig().getString("ForceStopGameTitle.Title")).replace("&", "§"), Objects.requireNonNull(main.getLanguageConfig().getString("ForceStopGameTitle.SubTitle")).replace("&", "§"), main.getLanguageConfig().getInt("ForceStopGameTitle.FadeIn"), main.getLanguageConfig().getInt("ForceStopGameTitle.Stay"), main.getLanguageConfig().getInt("ForceStopGameTitle.FadeOut"));
                         }
 
                         if(main.getConfig().getBoolean("GameOptions.AssassinsMode")){
                             Task.isRunning = false;
                         }
                     } else {
-                        sender.sendMessage("§cLa chasse n'est pas en cours !");
+                        sender.sendMessage(Objects.requireNonNull(main.getLanguageConfig().getString("TheGameHasntStartedYet")).replace("&", "§"));
                     }
                 } else {
-                    sender.sendMessage("§cTu n'as pas la permission d'exécuter cette commande.");
+                    sender.sendMessage(Objects.requireNonNull(main.getLanguageConfig().getString("YouCantExecuteThatCommand")).replace("&", "§"));
                 }
             }
 
-            if(args[0].equalsIgnoreCase("cible")){
+            if(args[0].equalsIgnoreCase("cible") || args[0].equalsIgnoreCase("target")){
                 if(sender instanceof Player){
                     Player player = (Player) sender;
                     if(main.getHunters().containsKey(player)){
@@ -118,10 +118,14 @@ public class CommandSpeedRunnerVSHunter implements CommandExecutor {
                                 player.openInventory(SpeedRunnerVSHunter.speedrunnersinv);
                             }
                         } else {
-                            player.sendMessage("§cAucun SpeedRunner n'est encore en course !");
+                            if(!Objects.requireNonNull(main.getLanguageConfig().getString("NoSpeedRunnerRemains")).isEmpty()){
+                                player.sendMessage(Objects.requireNonNull(main.getLanguageConfig().getString("NoSpeedRunnerRemains")).replace("&", "§"));
+                            }
                         }
                     } else {
-                        player.sendMessage("§cTu n'es pas un Chasseur !");
+                        if(!Objects.requireNonNull(main.getLanguageConfig().getString("YouAreNotAHunter")).isEmpty()){
+                            player.sendMessage(Objects.requireNonNull(main.getLanguageConfig().getString("YouAreNotAHunter")).replace("&", "§"));
+                        }
                     }
                 }
             }
@@ -134,28 +138,28 @@ public class CommandSpeedRunnerVSHunter implements CommandExecutor {
                         player.setPlayerListName(player.getName());
                         player.setDisplayName(player.getName());
 
-                        player.sendMessage("§cTu as quitté l'Équipe des Chasseurs.");
+                        player.sendMessage(Objects.requireNonNull(main.getLanguageConfig().getString("YouLeftTheHuntersTeam")).replace("&", "§"));
                         player.getInventory().remove(new ItemStack(Material.COMPASS, 1));
 
                         for(Player pls : Bukkit.getOnlinePlayers()){
                             if(pls != player){
-                                pls.sendMessage("§b[SpeedRunner] §6" + player.getName() + "§c a quitté l'Équipe des Chasseurs.");
+                                pls.sendMessage(Objects.requireNonNull(main.getLanguageConfig().getString("ASpeedRunnerLeftHisTeam")).replace("%player%", player.getName()).replace("&", "§"));
                             }
                         }
                     } else if(main.getSpeedRunners().containsKey(player)){
                         main.removeSpeedRunner(player);
-                        player.sendMessage("§cTu as quitté l'Équipe des SpeedRunners.");
+                        player.sendMessage(Objects.requireNonNull(main.getLanguageConfig().getString("YouLeftTheSpeedRunnersTeam")).replace("&", "§"));
 
                         for(Player pls : Bukkit.getOnlinePlayers()){
                             if(pls != player){
-                                pls.sendMessage("§b[SpeedRunner] §6" + player.getName() + "§c a quitté l'Équipe des SpeedRunners.");
+                                pls.sendMessage(Objects.requireNonNull(main.getLanguageConfig().getString("ASpeedRunnerLeftHisTeam")).replace("%player%", player.getName()).replace("&", "§"));
                             }
                         }
                     } else {
-                        sender.sendMessage("§cTu n'es dans Aucun Camp.");
+                        sender.sendMessage(Objects.requireNonNull(main.getLanguageConfig().getString("YouCantLeaveYourTeamBecauseYouAreNotInTheGame")).replace("&", "§"));
                     }
                 } else {
-                    sender.sendMessage("§cUsage Console : §6/speedrunner leave <player>");
+                    sender.sendMessage(Objects.requireNonNull(main.getLanguageConfig().getString("SpeedRunnerLeavePlayer_ConsoleUsage")).replace("&", "§"));
                 }
             }
         }
@@ -164,7 +168,7 @@ public class CommandSpeedRunnerVSHunter implements CommandExecutor {
             if(args[0].equalsIgnoreCase("leave") && sender.hasPermission("speedrunnervshunter.admin")){
                 Player cible = Bukkit.getPlayer(args[1]);
                 if(cible == null){
-                    sender.sendMessage("§cLe Joueur Spécifié n'Existe Pas !");
+                    sender.sendMessage(Objects.requireNonNull(main.getLanguageConfig().getString("SpecifiedPlayerDoesNotExist")).replace("&", "§"));
                 } else {
                     if(Bukkit.getOnlinePlayers().contains(cible)){
                         if(main.getHunters().containsKey(cible)){
@@ -172,28 +176,28 @@ public class CommandSpeedRunnerVSHunter implements CommandExecutor {
                             cible.setPlayerListName(cible.getName());
                             cible.setDisplayName(cible.getName());
 
-                            cible.sendMessage(sender.getName() + " §ct'a forcé à quitter ton Équipe.");
+                            cible.sendMessage(Objects.requireNonNull(main.getLanguageConfig().getString("AnOperatorForcedYouToLeaveYourTeam")).replace("%sender%", sender.getName()).replace("&", "§"));
                             cible.getInventory().remove(new ItemStack(Material.COMPASS, 1));
 
                             for(Player pls : Bukkit.getOnlinePlayers()){
                                 if(pls != cible){
-                                    pls.sendMessage("§b[SpeedRunner] §a" + sender.getName() + " §ca expulsé §6" + cible.getName() + "§c de l'Équipe des Chasseurs.");
+                                    pls.sendMessage(Objects.requireNonNull(main.getLanguageConfig().getString("AnOperatorKickedAHunter")).replace("%sender%", sender.getName()).replace("%player%", cible.getName()).replace("&", "§"));
                                 }
                             }
                         } else if(main.getSpeedRunners().containsKey(cible)){
                             main.removeSpeedRunner(cible);
-                            cible.sendMessage(sender.getName() + " §ct'a forcé à quitter ton Équipe.");
+                            cible.sendMessage(Objects.requireNonNull(main.getLanguageConfig().getString("AnOperatorForcedYouToLeaveYourTeam")).replace("%sender%", sender.getName()).replace("&", "§"));
 
                             for(Player pls : Bukkit.getOnlinePlayers()){
                                 if(pls != cible){
-                                    pls.sendMessage("§b[SpeedRunner] §a" + sender.getName() + " §ca expulsé §6" + cible.getName() + "§c de l'Équipe des SpeedRunners.");
+                                    pls.sendMessage(Objects.requireNonNull(main.getLanguageConfig().getString("AnOperatorKickedASpeedRunner")).replace("%sender%", sender.getName()).replace("%player%", cible.getName()).replace("&", "§"));
                                 }
                             }
                         } else {
-                            sender.sendMessage("§cLe Joueur Spécifié n'est dans Aucun Camp.");
+                            sender.sendMessage(Objects.requireNonNull(main.getLanguageConfig().getString("TheSpecifiedPlayerCantLeaveHisTeamBecauseHeIsNotInTheGame")).replace("&", "§"));
                         }
                     } else {
-                        sender.sendMessage("§cLe Joueur Spécifié N'Est Pas Connecté !");
+                        sender.sendMessage(Objects.requireNonNull(main.getLanguageConfig().getString("TheSpecifiedPlayerIsNotOnline")).replace("&", "§"));
                     }
                 }
             }
@@ -203,7 +207,7 @@ public class CommandSpeedRunnerVSHunter implements CommandExecutor {
             if(args[0].equalsIgnoreCase("join") && sender.hasPermission("speedrunnervshunter.admin")){
                 Player cible = Bukkit.getPlayer(args[2]);
                 if(cible == null){
-                    sender.sendMessage("§cLe Joueur Spécifié n'Existe Pas !");
+                    sender.sendMessage(Objects.requireNonNull(main.getLanguageConfig().getString("SpecifiedPlayerDoesNotExist")).replace("%player%", args[2]).replace("&", "§"));
                 } else {
                     if(Bukkit.getOnlinePlayers().contains(cible)){
                         if(args[1].equalsIgnoreCase("speedrunners")){
@@ -212,42 +216,42 @@ public class CommandSpeedRunnerVSHunter implements CommandExecutor {
                                 cible.setPlayerListName(cible.getName());
                                 cible.setDisplayName(cible.getName());
 
-                                cible.sendMessage(sender.getName() + " §ct'a forcé à quitter ton Équipe.");
+                                cible.sendMessage(Objects.requireNonNull(main.getLanguageConfig().getString("AnOperatorForcedYouToLeaveYourTeam")).replace("%sender%",sender.getName()).replace("&", "§"));
                                 cible.getInventory().remove(new ItemStack(Material.COMPASS, 1));
 
                                 for(Player pls : Bukkit.getOnlinePlayers()){
                                     if(pls != cible){
-                                        pls.sendMessage("§b[SpeedRunner] §a" + sender.getName() + " §ca expulsé §6" + cible.getName() + "§c de l'Équipe des Chasseurs.");
+                                        pls.sendMessage(Objects.requireNonNull(main.getLanguageConfig().getString("AnOperatorKickedAHunter")).replace("%sender%", sender.getName()).replace("%player%", cible.getName()).replace("&", "§"));
                                     }
                                 }
                             }
 
                             main.addSpeedRunner(cible);
-                            cible.sendMessage("§aTu as rejoins l'Équipe des SpeedRunners !");
+                            cible.sendMessage(Objects.requireNonNull(main.getLanguageConfig().getString("YouJoinedTheSpeedRunnersTeam")).replace("&", "§"));
                             for(Player pls : Bukkit.getOnlinePlayers()){
                                 if(pls != cible){
-                                    pls.sendMessage("§b[SpeedRunner] §6" + cible.getName() + "§a a rejoint l'Équipe des SpeedRunners !");
+                                    pls.sendMessage(Objects.requireNonNull(main.getLanguageConfig().getString("SomeoneJoinedTheSpeedRunnerTeam")).replace("%player%", cible.getName()).replace("&", "§"));
                                 }
                             }
-                        } else if(args[1].equalsIgnoreCase("chasseurs")){
+                        } else if(args[1].equalsIgnoreCase("chasseurs") || args[1].equalsIgnoreCase("hunters")){
                             if(main.getSpeedRunners().containsKey(cible)){
                                 main.removeSpeedRunner(cible);
-                                cible.sendMessage(sender.getName() + " §ct'a forcé à quitter ton Équipe.");
+                                cible.sendMessage(Objects.requireNonNull(main.getLanguageConfig().getString("AnOperatorForcedYouToLeaveYourTeam")).replace("%sender%", sender.getName()).replace("&", "§"));
 
                                 for(Player pls : Bukkit.getOnlinePlayers()){
                                     if(pls != cible){
-                                        pls.sendMessage("§b[SpeedRunner] §a" + sender.getName() + " §ca expulsé §6" + cible.getName() + "§c de l'Équipe des SpeedRunners.");
+                                        pls.sendMessage(Objects.requireNonNull(main.getLanguageConfig().getString("AnOperatorKickedASpeedRunner")).replace("%sender%", sender.getName()).replace("%player%", cible.getName()).replace("&", "§"));
                                     }
                                 }
                             }
 
                             main.getHunters().put(cible, cible);
-                            cible.setPlayerListName("§b[Chasseur] §r" + cible.getName());
-                            cible.setDisplayName("§b[Chasseur] §r" + cible.getName());
-                            cible.sendMessage("§aTu as rejoins l'Équipe des Chasseurs !");
+                            cible.setPlayerListName(Objects.requireNonNull(main.getLanguageConfig().getString("Hunters_PlayerListName")).replace("%player%", cible.getName()).replace("&", "§"));
+                            cible.setDisplayName(Objects.requireNonNull(main.getLanguageConfig().getString("Hunters_PlayerDisplayName")).replace("%player%", cible.getName()).replace("&", "§"));
+                            cible.sendMessage(Objects.requireNonNull(main.getLanguageConfig().getString("YouJoinedTheHuntersTeam")).replace("&", "§"));
                             for(Player pls : Bukkit.getOnlinePlayers()){
                                 if(pls != cible){
-                                    pls.sendMessage("§b[SpeedRunner] §6" + cible.getName() + "§a a rejoint l'Équipe des Chasseurs !");
+                                    pls.sendMessage(Objects.requireNonNull(main.getLanguageConfig().getString("SomeoneJoinedTheHuntersTeam")).replace("%player%", cible.getName()).replace("&", "§"));
                                 }
                             }
 
@@ -256,13 +260,13 @@ public class CommandSpeedRunnerVSHunter implements CommandExecutor {
                             cible.getInventory().addItem(compass);
                             if(!main.getSpecialPlayerHunterTrack().containsKey(cible)){
                                 main.getSpecialPlayerHunterTrack().put(cible, false);
-                                cible.sendMessage("§6Exécutes la commande §b/speedrunner cible §6pour choisir une Cible Précise, sinon ta boussole traquera le Joueur le plus proche §2§lQuand tu cliqueras avec §6!");
+                                cible.sendMessage(Objects.requireNonNull(main.getLanguageConfig().getString("HunterTargetCommandInfo")).replace("&", "§"));
                             }
                         } else {
-                            sender.sendMessage("§cLe camp spécifié n'existe Pas !");
+                            sender.sendMessage(Objects.requireNonNull(main.getLanguageConfig().getString("ThisTeamDoesNotExist")).replace("&", "§"));
                         }
                     } else {
-                        sender.sendMessage("§cLe Joueur Spécifié N'Est Pas Connecté !");
+                        sender.sendMessage(Objects.requireNonNull(main.getLanguageConfig().getString("TheSpecifiedPlayerIsNotOnline")).replace("%player%", cible.getName()).replace("&", "§"));
                     }
                 }
             }

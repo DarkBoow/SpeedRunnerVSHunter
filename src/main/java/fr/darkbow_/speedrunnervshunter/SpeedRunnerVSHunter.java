@@ -35,8 +35,8 @@ public class SpeedRunnerVSHunter extends JavaPlugin {
     private Map<String, String> configurationoptions;
     private List<Player> frozenhunters;
     private boolean gameStarted = false;
-    public static Inventory speedrunnersinv = Bukkit.createInventory(null, 54, "§2§lSpeedRunners");
-    public static Inventory choixcamp = Bukkit.createInventory(null, 9, "§9§lChoisis ton Camp");
+    public static Inventory speedrunnersinv;
+    public static Inventory choixcamp;
     public static boolean needpermission = false;
 
     public static BukkitTask task;
@@ -44,8 +44,8 @@ public class SpeedRunnerVSHunter extends JavaPlugin {
 
     public String sversion;
 
-    private File messagesfile;
-    private FileConfiguration messagesconfig;
+    private File languagefile;
+    private FileConfiguration languageconfig;
 
     public SpeedRunnerVSHunter getInstance() {
         return this.instance;
@@ -54,7 +54,7 @@ public class SpeedRunnerVSHunter extends JavaPlugin {
     @Override
     public void onEnable() {
         if(!setupManager()){
-            getLogger().severe("Failed to setup SamplePlugin! Running non-compatible version!");
+            getLogger().severe("Failed to setup the SpeedRunnerVSHunter plugin! Running non-compatible version!");
             Bukkit.getPluginManager().disablePlugin(this);
             return;
         }
@@ -71,9 +71,9 @@ public class SpeedRunnerVSHunter extends JavaPlugin {
         this.configurationoptions = new HashMap<>();
         this.frozenhunters = new ArrayList<>();
 
-        createMessagesFile();
+        createLanguageFile();
 
-        this.HashSet = new HashSet<Material>();
+        this.HashSet = new HashSet<>();
         for(Material mat : Material.values()){
             if(!mat.isSolid()){
                 HashSet.add(mat);
@@ -105,6 +105,9 @@ public class SpeedRunnerVSHunter extends JavaPlugin {
             }
         }
 
+        speedrunnersinv = Bukkit.createInventory(null, 54, Objects.requireNonNull(getLanguageConfig().getString("SpeedRunners_InventoryTitle")).replace("&", "§"));
+        choixcamp = Bukkit.createInventory(null, 9, Objects.requireNonNull(getLanguageConfig().getString("ChoseYourSide_InventoryTitle")).replace("&", "§"));
+
         createInventory();
 
         for(World world : Bukkit.getWorlds()){
@@ -129,12 +132,12 @@ public class SpeedRunnerVSHunter extends JavaPlugin {
         int pluginId = 10640; // <-- Replace with the id of your plugin!
         Metrics metrics = new Metrics(this, pluginId);
 
-        System.out.println(Objects.requireNonNull(getMessagesConfig().getString("Plugin_Enabled")).replace("&", "§"));
+        System.out.println(Objects.requireNonNull(getLanguageConfig().getString("Plugin_Enabled")).replace("&", "§"));
     }
 
     @Override
     public void onDisable() {
-        System.out.println(Objects.requireNonNull(getMessagesConfig().getString("Plugin_Disabled")).replace("&", "§"));
+        System.out.println(Objects.requireNonNull(getLanguageConfig().getString("Plugin_Disabled")).replace("&", "§"));
     }
 
     private boolean setupManager(){
@@ -149,24 +152,24 @@ public class SpeedRunnerVSHunter extends JavaPlugin {
         return (sversion.equals("v1_16_R1") || sversion.equals("v1_16_R2") || sversion.equals("v1_16_R3") || sversion.equals("v1_17_R1") || sversion.startsWith("v1_12"));
     }
 
-    public FileConfiguration getMessagesConfig(){
-        return this.messagesconfig;
+    public FileConfiguration getLanguageConfig(){
+        return this.languageconfig;
     }
 
-    public File getMessagesFile(){
-        return this.messagesfile;
+    public File getLanguageFile(){
+        return this.languagefile;
     }
 
-    public void createMessagesFile(){
-        messagesfile = new File(getDataFolder(), "messages.yml");
-        if(!messagesfile.exists()){
-            if(!messagesfile.getParentFile().exists()){messagesfile.getParentFile().mkdirs();}
-            saveResource("messages.yml", false);
+    public void createLanguageFile(){
+        languagefile = new File(getDataFolder(), "lang.yml");
+        if(!languagefile.exists()){
+            if(!languagefile.getParentFile().exists()){languagefile.getParentFile().mkdirs();}
+            saveResource("lang.yml", false);
         }
 
-        messagesconfig = new YamlConfiguration();
+        languageconfig = new YamlConfiguration();
         try {
-            messagesconfig.load(messagesfile);
+            languageconfig.load(languagefile);
         } catch (IOException | InvalidConfigurationException e){
             e.printStackTrace();
         }
@@ -190,11 +193,11 @@ public class SpeedRunnerVSHunter extends JavaPlugin {
     }
 
     public void createInventory(){
-        choixcamp.setItem(3, getItem(Material.SUGAR, 1, (byte)0, Objects.requireNonNull(getMessagesConfig().getString("SpeedRunner_ItemName")).replace("&", "§"), getColoredStringList(getMessagesConfig().getStringList("SpeedRunner_ItemDescription")), null, 0, false, null, null));
-        choixcamp.setItem(5, getItem(Material.IRON_SWORD, 1, (byte)0, Objects.requireNonNull(getMessagesConfig().getString("Hunter_ItemName")).replace("&", "§"), getColoredStringList(getMessagesConfig().getStringList("Hunter_ItemDescription")), null, 0, false, null, null));
+        choixcamp.setItem(3, getItem(Material.SUGAR, 1, (byte)0, Objects.requireNonNull(getLanguageConfig().getString("SpeedRunner_ItemName")).replace("&", "§"), getColoredStringList(getLanguageConfig().getStringList("SpeedRunner_ItemDescription")), null, 0, false, null, null));
+        choixcamp.setItem(5, getItem(Material.IRON_SWORD, 1, (byte)0, Objects.requireNonNull(getLanguageConfig().getString("Hunter_ItemName")).replace("&", "§"), getColoredStringList(getLanguageConfig().getStringList("Hunter_ItemDescription")), null, 0, false, null, null));
 
 
-        ItemStack randomhead = getItem(Material.PLAYER_HEAD, 1, (byte)0, Objects.requireNonNull(getMessagesConfig().getString("NearestSpeedRunner_ItemName")).replace("&", "§"), getColoredStringList(getMessagesConfig().getStringList("NearestSpeedRunner_ItemDescription")), null, 0, false, null, null);
+        ItemStack randomhead = getItem(Material.PLAYER_HEAD, 1, (byte)0, Objects.requireNonNull(getLanguageConfig().getString("NearestSpeedRunner_ItemName")).replace("&", "§"), getColoredStringList(getLanguageConfig().getStringList("NearestSpeedRunner_ItemDescription")), null, 0, false, null, null);
 
         SkullMeta playerheadmeta = (SkullMeta) randomhead.getItemMeta();
         /*playerheadmeta.setOwner("Hynity");*/
@@ -229,8 +232,8 @@ public class SpeedRunnerVSHunter extends JavaPlugin {
         }
 
         this.speedrunners.put(player, true);
-        player.setPlayerListName("§a[SpeedRunner] §r" + player.getName());
-        player.setDisplayName("§a[SpeedRunner] §r" + player.getName());
+        player.setPlayerListName(Objects.requireNonNull(getLanguageConfig().getString("SpeedRunners_PlayerListName")).replace("%player%", player.getName()).replace("&", "§"));
+        player.setDisplayName(Objects.requireNonNull(getLanguageConfig().getString("SpeedRunners_PlayerDisplayName")).replace("%player%", player.getName()).replace("&", "§"));
 
         this.speedrunnersplayerheads.put(player, playerhead);
         speedrunnersinv.addItem(playerhead);
@@ -306,12 +309,12 @@ public class SpeedRunnerVSHunter extends JavaPlugin {
                 speedrunners.remove(player);
 
                 getHunters().put(player, player);
-                player.setPlayerListName("§b[Chasseur] §r" + player.getName());
-                player.setDisplayName("§b[Chasseur] §r" + player.getName());
-                player.sendMessage("§aTu devient Chasseur suite à ta Mort !");
+                player.setPlayerListName(Objects.requireNonNull(getLanguageConfig().getString("Hunters_PlayerListName")).replace("%player%", player.getName()).replace("&", "§"));
+                player.setDisplayName(Objects.requireNonNull(getLanguageConfig().getString("Hunters_PlayerDisplayName")).replace("%player%", player.getName()).replace("&", "§"));
+                player.sendMessage(Objects.requireNonNull(getLanguageConfig().getString("YouBecameAHunter")).replace("&", "§"));
                 for(Player pls : Bukkit.getOnlinePlayers()){
                     if(pls != player){
-                        pls.sendMessage("§b[SpeedRunner] Le SpeedRunner §6" + player.getName() + "§a est devenu Chasseur suite à sa Mort !");
+                        pls.sendMessage(Objects.requireNonNull(getLanguageConfig().getString("ASpeedRunnerBecomesAHunter")).replace("%player%", player.getName()).replace("&", "§"));
                     }
                 }
 
@@ -320,7 +323,7 @@ public class SpeedRunnerVSHunter extends JavaPlugin {
                 player.getInventory().addItem(compass);
                 if(!getSpecialPlayerHunterTrack().containsKey(player)){
                     getSpecialPlayerHunterTrack().put(player, false);
-                    player.sendMessage("§6Exécutes la commande §b/speedrunner cible §6pour choisir une Cible Précise, sinon ta boussole traquera le Joueur le plus proche §2§lQuand tu cliqueras avec §6!");
+                    player.sendMessage(Objects.requireNonNull(getLanguageConfig().getString("HunterTargetCommandInfo")).replace("&","§"));
                 }
             }
         } else {
@@ -331,18 +334,18 @@ public class SpeedRunnerVSHunter extends JavaPlugin {
             setGameStarted(false);
             for(Player pls : this.speedrunners.keySet()){
                 if(pls.isOnline()){
-                    pls.sendMessage("§cTu as perdu la chasse " + player.getName() + ".");
+                    pls.sendMessage(Objects.requireNonNull(getLanguageConfig().getString("YouLostTheChase")).replace("%player%", player.getName()).replace("&", "§"));
                 }
             }
 
             for(Player pls : this.hunters.keySet()){
                 if(pls.isOnline()){
-                    pls.sendMessage("§6Tu as gagné la chasse, Bravo " + player.getName() + " !");
+                    pls.sendMessage(Objects.requireNonNull(getLanguageConfig().getString("YouWonTheChase")).replace("%player%", player.getName()).replace("&", "§"));
                 }
             }
 
-            Bukkit.broadcastMessage("§6§lLa chasse a été gagnée par les Chasseurs !");
-            Bukkit.broadcastMessage("§c§lLes SpeedRunners ont Perdu !");
+            Bukkit.broadcastMessage(Objects.requireNonNull(getLanguageConfig().getString("TheHuntersWonTheGame")).replace("&", "§"));
+            Bukkit.broadcastMessage(Objects.requireNonNull(getLanguageConfig().getString("TheSpeedRunnersLost")).replace("&", "§"));
         }
     }
 
