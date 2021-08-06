@@ -1,9 +1,11 @@
 package fr.darkbow_.speedrunnervshunter;
 
+import com.google.common.collect.Sets;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.*;
 import org.bukkit.advancement.Advancement;
 import org.bukkit.advancement.AdvancementProgress;
+import org.bukkit.block.Block;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
@@ -13,22 +15,29 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitTask;
+import org.bukkit.util.BlockIterator;
 
 import java.util.*;
 
 public class SpeedRunnerVSHunter extends JavaPlugin {
     private SpeedRunnerVSHunter instance;
-    public Titles title = new Titles();
     private HashMap<Player, Boolean> speedrunners;
     private HashMap<Player, Player> hunters;
     private HashMap<Player, Boolean> specialplayertrack;
     private HashMap<Player, ItemStack> speedrunnersplayerheads;
     private Map<String, ItemStack> itemsByName;
     private Map<String, String> configurationoptions;
+    private List<Player> frozenhunters;
     private boolean gameStarted = false;
     public static Inventory speedrunnersinv = Bukkit.createInventory(null, 54, "§2§lSpeedRunners");
     public static Inventory choixcamp = Bukkit.createInventory(null, 9, "§9§lChoisis ton Camp");
     public static boolean needpermission = false;
+
+    public static BukkitTask task;
+    private Set<Material> HashSet;
+
+    public String sversion;
 
     public SpeedRunnerVSHunter getInstance() {
         return this.instance;
@@ -36,6 +45,12 @@ public class SpeedRunnerVSHunter extends JavaPlugin {
 
     @Override
     public void onEnable() {
+        if(!setupManager()){
+            getLogger().severe("Failed to setup SamplePlugin! Running non-compatible version!");
+            Bukkit.getPluginManager().disablePlugin(this);
+            return;
+        }
+
         saveDefaultConfig();
 
         instance = this;
@@ -46,6 +61,14 @@ public class SpeedRunnerVSHunter extends JavaPlugin {
         this.itemsByName = new HashMap<>();
         this.specialplayertrack = new HashMap<>();
         this.configurationoptions = new HashMap<>();
+        this.frozenhunters = new ArrayList<>();
+
+        this.HashSet = new HashSet<Material>();
+        for(Material mat : Material.values()){
+            if(!mat.isSolid()){
+                HashSet.add(mat);
+            }
+        }
 
         needpermission = getConfig().getBoolean("Play_Permission");
 
@@ -102,6 +125,18 @@ public class SpeedRunnerVSHunter extends JavaPlugin {
     @Override
     public void onDisable() {
         System.out.println("[SpeedRunnerVSHunter] Plugin Désactivé !");
+    }
+
+    private boolean setupManager(){
+        sversion = "N/A";
+
+        try{
+            sversion = Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3];
+        } catch (ArrayIndexOutOfBoundsException e){
+            return false;
+        }
+
+        return (sversion.equals("v1_16_R1") || sversion.equals("v1_16_R2") || sversion.equals("v1_16_R3") || sversion.equals("v1_17_R1") || sversion.startsWith("v1_12"));
     }
 
     public HashMap<Player, Boolean> getSpeedRunners() {
@@ -185,13 +220,16 @@ public class SpeedRunnerVSHunter extends JavaPlugin {
         }
         this.speedrunnersplayerheads.remove(player);
         this.speedrunners.remove(player);
+
         player.setPlayerListName(player.getName());
         player.setDisplayName(player.getName());
     }
 
     public void SpeedRunnerHorsCourse(Player player){
         if(getConfig().getBoolean("GameOptions.SpectatorAfterSpeedRunnerRealDeath")){
-            player.setGameMode(GameMode.SPECTATOR);
+            if(getSpeedRunners().size() > 1){
+                player.setGameMode(GameMode.SPECTATOR);
+            }
         }
 
         this.speedrunners.put(player, false);
@@ -339,7 +377,69 @@ public class SpeedRunnerVSHunter extends JavaPlugin {
         return false;
     }
 
+    public List<Block> getLineOfSight(Set<Material> transparent, int maxDistance, int maxLength, Player player) {
+        if (transparent == null) {
+            transparent = Sets.newHashSet(Material.AIR, Material.CAVE_AIR, Material.VOID_AIR);
+        }
+
+        if (maxDistance > 120) {
+            maxDistance = 120;
+        }
+
+        ArrayList<Block> blocks = new ArrayList<Block>();
+        Iterator<Block> itr = new BlockIterator(player, maxDistance);
+        while (itr.hasNext()) {
+            Block block = itr.next();
+            blocks.add(block);
+            if (maxLength != 0 && blocks.size() > maxLength) {
+                blocks.remove(0);
+            }
+            Material material = block.getType();
+            if (!transparent.contains(material)) {
+                break;
+            }
+        }
+        return blocks;
+    }
+
+    public void spawnParticles(Set<Material> transparent, int maxDistance, int maxLength, Player player) {
+        if (transparent == null) {
+            transparent = Sets.newHashSet(Material.AIR, Material.CAVE_AIR, Material.VOID_AIR);
+        }
+
+        if (maxDistance > 120) {
+            maxDistance = 120;
+        }
+
+        ArrayList<Block> blocks = new ArrayList<>();
+        Iterator<Block> itr = new BlockIterator(player, maxDistance);
+        while (itr.hasNext()) {
+            Block block = itr.next();
+            blocks.add(block);
+            if (maxLength != 0 && blocks.size() > maxLength) {
+                blocks.remove(0);
+            }
+            Material material = block.getType();
+            if (!transparent.contains(material)) {
+                break;
+            }
+        }
+
+        for(Block block : blocks){
+            Particle.DustOptions dustOptions = new Particle.DustOptions(Color.fromRGB(255, 0, 0), 1.0F);
+            block.getWorld().spawnParticle(Particle.REDSTONE, block.getLocation(), 1, dustOptions);
+        }
+    }
+
+    public Set<Material> getHashSet(){
+        return HashSet;
+    }
+
     public Map<String, String> getConfigurationoptions() {
         return configurationoptions;
+    }
+
+    public List<Player> getFrozenHunters() {
+        return frozenhunters;
     }
 }

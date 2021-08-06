@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="Maven: xyz.tozymc.spigot:title-api:1.0">
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/xyz/tozymc/spigot/title-api/1.0/title-api-1.0.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$MAVEN_REPOSITORY$/xyz/tozymc/spigot/title-api/1.0/title-api-1.0-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/xyz/tozymc/spigot/title-api/1.0/title-api-1.0-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

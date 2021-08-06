@@ -8,7 +8,7 @@ OffGameProtection:
   Disable_DayLight_Cycle: true
   Disable_Block_Place: true
   Disable_Block_Break: true
-  Disable_OpenChest: true
+  Disable_Open_Block_Inventory: true
   Disable_Item_Drop: true
   StartWorldBorder: SpawnRadiusGamerule #Set to -1 to disable or set to SpawnRadiusGamerule to base the border size on your SpawnRadius Gamerule Value
   WorldStartTime: 51 #Set to -1 to disable
@@ -16,3 +16,4 @@ GameOptions:
   SpeedRunnersBecomesHuntersAtDeath: false
   #If the option above is set to false, the option below will be checked
   SpectatorAfterSpeedRunnerRealDeath: true
+  AssassinsMode: false

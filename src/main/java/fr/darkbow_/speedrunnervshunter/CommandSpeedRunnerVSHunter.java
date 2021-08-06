@@ -6,8 +6,7 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-
-import java.util.Objects;
+import xyz.tozymc.spigot.api.title.TitleApi;
 
 public class CommandSpeedRunnerVSHunter implements CommandExecutor {
     private final SpeedRunnerVSHunter main;
@@ -67,7 +66,13 @@ public class CommandSpeedRunnerVSHunter implements CommandExecutor {
                             if(main.getHunters().containsKey(pls)){
                                 pls.sendMessage("§bVotre boussole de chasseur pointe initialement le SpeedRunner le plus proche de vous.\n§aExécutez la commande §2§l/speedrunner cible §apour modifier votre SpeedRunner cible.");
                             }
-                            main.title.sendTitle(pls, "§b§lSpeedRunner", "§6La Chasse Peut §e§lCOMMENCER !!", 20);
+
+                            TitleApi.sendTitle(pls, "§b§lSpeedRunner", "§6La Chasse Peut §e§lCOMMENCER !!", 20, 20, 20);
+                        }
+
+                        if(main.getConfig().getBoolean("GameOptions.AssassinsMode")){
+                            SpeedRunnerVSHunter.task = new Task(main).runTaskTimer(main, 1L, 1L);
+                            Task.isRunning = true;
                         }
                     }
                 } else {
@@ -88,7 +93,11 @@ public class CommandSpeedRunnerVSHunter implements CommandExecutor {
                         }
                         Bukkit.broadcastMessage("§cLa chasse a été stoppée par un §4§lAdministrateur §c!");
                         for(Player pls : Bukkit.getOnlinePlayers()){
-                            main.title.sendTitle(pls, "§b§lSpeedRunner", "§cChasse Stoppée par un Admin !", 20);
+                            TitleApi.sendTitle(pls, "§b§lSpeedRunner", "§cChasse Stoppée par un Admin !", 20, 20, 20);
+                        }
+
+                        if(main.getConfig().getBoolean("GameOptions.AssassinsMode")){
+                            Task.isRunning = false;
                         }
                     } else {
                         sender.sendMessage("§cLa chasse n'est pas en cours !");

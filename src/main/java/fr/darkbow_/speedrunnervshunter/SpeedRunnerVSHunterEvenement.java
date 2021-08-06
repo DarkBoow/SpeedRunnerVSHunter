@@ -2,25 +2,22 @@ package fr.darkbow_.speedrunnervshunter;
 
 import de.tr7zw.nbtapi.NBTItem;
 import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.World;
+import org.bukkit.entity.Damageable;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
-import org.bukkit.event.entity.EntityDamageEvent;
-import org.bukkit.event.entity.EntityTargetEvent;
-import org.bukkit.event.entity.FoodLevelChangeEvent;
-import org.bukkit.event.entity.PlayerDeathEvent;
+import org.bukkit.event.entity.*;
 import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.event.player.PlayerAdvancementDoneEvent;
-import org.bukkit.event.player.PlayerDropItemEvent;
-import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.event.player.PlayerRespawnEvent;
+import org.bukkit.event.player.*;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.CompassMeta;
+import xyz.tozymc.spigot.api.title.TitleApi;
 
 import java.util.Map;
 import java.util.Objects;
@@ -40,6 +37,18 @@ public class SpeedRunnerVSHunterEvenement implements Listener {
             } else {
                 if(main.getConfigurationoptions().containsKey("Disable_Entity_Damages")){
                     event.setCancelled(Boolean.parseBoolean(main.getConfigurationoptions().get("Disable_Entity_Damages")));
+                }
+            }
+        }
+    }
+
+    @EventHandler
+    public void onEntityDamageByEntity(EntityDamageByEntityEvent event){
+        if(main.isGameStarted() && event.getDamager() instanceof Player){
+            Player damager = (Player) event.getDamager();
+            if(main.getHunters().containsKey(damager)){
+                if(event.getEntity() instanceof Damageable){
+                    event.setDamage(((Damageable) event.getEntity()).getHealth());
                 }
             }
         }
@@ -90,8 +99,8 @@ public class SpeedRunnerVSHunterEvenement implements Listener {
         if(!main.isGameStarted()){
             if(event.getAction() == Action.RIGHT_CLICK_BLOCK){
                 if(event.getClickedBlock() != null){
-                    if(event.getClickedBlock().getType() == Material.CHEST || event.getClickedBlock().getType() == Material.CHEST_MINECART || event.getClickedBlock().getType() == Material.ENDER_CHEST || event.getClickedBlock().getType() == Material.SHULKER_BOX){
-                        event.setCancelled(main.getConfig().getBoolean("OffGameProtection.Disable_OpenChest"));
+                    if(event.getPlayer().getGameMode() != GameMode.CREATIVE){
+                        event.setCancelled(main.getConfig().getBoolean("OffGameProtection.Disable_Open_Block_Inventory"));
                     }
                 }
             }
@@ -287,11 +296,11 @@ public class SpeedRunnerVSHunterEvenement implements Listener {
                                 for(Player pls : Bukkit.getOnlinePlayers()){
                                     if(main.getSpeedRunners().containsKey(pls)){
                                         main.getSpeedRunners().put(pls, true);
-                                        main.title.sendTitle(pls, "§c§lDÉFAITE", "§bLes Chasseurs ont Gagné...", 20);
+                                        TitleApi.sendTitle(pls, "§c§lDÉFAITE", "§bLes Chasseurs ont Gagné...", 20, 20, 20);
                                     }
 
                                     if(main.getHunters().containsKey(pls)){
-                                        main.title.sendTitle(pls, "§6§lVICTOIRE", "§bLes Chasseurs ont Gagné !!", 20);
+                                        TitleApi.sendTitle(pls, "§6§lVICTOIRE", "§bLes Chasseurs ont Gagné !!", 20, 20, 20);
                                     }
                                 }
 
@@ -307,11 +316,11 @@ public class SpeedRunnerVSHunterEvenement implements Listener {
                         for(Player pls : Bukkit.getOnlinePlayers()){
                             if(main.getSpeedRunners().containsKey(pls)){
                                 main.getSpeedRunners().put(pls, true);
-                                main.title.sendTitle(pls, "§c§lDÉFAITE", "§bLes Chasseurs ont Gagné...", 20);
+                                TitleApi.sendTitle(pls, "§c§lDÉFAITE", "§bLes Chasseurs ont Gagné...", 20, 20, 20);
                             }
 
                             if(main.getHunters().containsKey(pls)){
-                                main.title.sendTitle(pls, "§6§lVICTOIRE", "§bLes Chasseurs ont Gagné !!", 20);
+                                TitleApi.sendTitle(pls, "§6§lVICTOIRE", "§bLes Chasseurs ont Gagné !!", 20, 20, 20);
                             }
                         }
                         main.setGameStarted(false);
@@ -348,11 +357,11 @@ public class SpeedRunnerVSHunterEvenement implements Listener {
                     for(Player pls : Bukkit.getOnlinePlayers()){
                         if(main.getSpeedRunners().containsKey(pls)){
                             main.getSpeedRunners().put(pls, true);
-                            main.title.sendTitle(pls, "§6§lVICTOIRE", "§bLes SpeedRunners ont Gagné !!", 20);
+                            TitleApi.sendTitle(pls, "§6§lVICTOIRE", "§bLes SpeedRunners ont Gagné !!", 20, 20, 20);
                         }
 
                         if(main.getHunters().containsKey(pls)){
-                            main.title.sendTitle(pls, "§c§lDÉFAITE", "§bLes SpeedRunners ont Gagné...", 20);
+                            TitleApi.sendTitle(pls, "§c§lDÉFAITE", "§bLes SpeedRunners ont Gagné...", 20, 20, 20);
                         }
                     }
                     main.setGameStarted(false);
@@ -383,6 +392,19 @@ public class SpeedRunnerVSHunterEvenement implements Listener {
 
         if(!main.isGameStarted()){
             event.setCancelled(main.getConfig().getBoolean("OffGameProtection.Disable_Item_Drop"));
+        }
+    }
+
+    @EventHandler
+    public void onMove(PlayerMoveEvent event){
+        if(main.getConfig().getBoolean("GameOptions.AssassinsMode")){
+            if(main.isGameStarted()){
+                if(main.getHunters().containsKey(event.getPlayer())){
+                    if(main.getFrozenHunters().contains(event.getPlayer())){
+                        event.setCancelled(true);
+                    }
+                }
+            }
         }
     }
 }
