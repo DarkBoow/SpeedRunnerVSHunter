@@ -1,0 +1,23 @@
+Plugin_Enabled: "[SpeedRunnerVSHunter] Plugin Activé !!"
+Disable: "[SpeedRunnerVSHunter] Plugin Désactivé !"
+
+CommandRequiresToBeAPlayer: "&cSeuls les Joueurs peuvent exécuter cette commande !"
+DontHavePermissionToPlay: "&cTu n'as pas la permission de rejoindre une partie."
+
+
+SpeedRunner_ItemName: "&2&lSpeedRunner"
+SpeedRunner_ItemDescription:
+  - ""
+  - "&7Rejoindre le camp des SpeedRunners"
+
+Hunter_ItemName: "&c&lChasseur"
+Hunter_ItemDescription:
+  - ""
+  - "&7Rejoindre le camp des Chasseurs"
+
+
+NearestSpeedRunner_ItemName: "&6&lCible la Plus Proche"
+NearestSpeedRunner_ItemDescription:
+  - ""
+  - "&7Votre boussole de Chasseur pointera vers"
+  - "&7le SpeedRunner le Plus Proche de Vous"
