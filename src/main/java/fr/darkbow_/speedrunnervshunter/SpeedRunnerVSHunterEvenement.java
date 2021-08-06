@@ -358,10 +358,14 @@ public class SpeedRunnerVSHunterEvenement implements Listener {
                         if(main.getSpeedRunners().containsKey(pls)){
                             main.getSpeedRunners().put(pls, true);
                             TitleApi.sendTitle(pls, "§6§lVICTOIRE", "§bLes SpeedRunners ont Gagné !!", 20, 20, 20);
+                            pls.setHealth(pls.getMaxHealth());
+                            pls.setFoodLevel(20);
                         }
 
                         if(main.getHunters().containsKey(pls)){
                             TitleApi.sendTitle(pls, "§c§lDÉFAITE", "§bLes SpeedRunners ont Gagné...", 20, 20, 20);
+                            pls.setHealth(pls.getMaxHealth());
+                            pls.setFoodLevel(20);
                         }
                     }
                     main.setGameStarted(false);

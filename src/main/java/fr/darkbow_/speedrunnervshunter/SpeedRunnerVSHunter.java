@@ -7,6 +7,9 @@ import org.bukkit.advancement.Advancement;
 import org.bukkit.advancement.AdvancementProgress;
 import org.bukkit.block.Block;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.configuration.InvalidConfigurationException;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
@@ -18,6 +21,8 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.util.BlockIterator;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.*;
 
 public class SpeedRunnerVSHunter extends JavaPlugin {
@@ -38,6 +43,9 @@ public class SpeedRunnerVSHunter extends JavaPlugin {
     private Set<Material> HashSet;
 
     public String sversion;
+
+    private File messagesfile;
+    private FileConfiguration messagesconfig;
 
     public SpeedRunnerVSHunter getInstance() {
         return this.instance;
@@ -62,6 +70,8 @@ public class SpeedRunnerVSHunter extends JavaPlugin {
         this.specialplayertrack = new HashMap<>();
         this.configurationoptions = new HashMap<>();
         this.frozenhunters = new ArrayList<>();
+
+        createMessagesFile();
 
         this.HashSet = new HashSet<Material>();
         for(Material mat : Material.values()){
@@ -119,12 +129,12 @@ public class SpeedRunnerVSHunter extends JavaPlugin {
         int pluginId = 10640; // <-- Replace with the id of your plugin!
         Metrics metrics = new Metrics(this, pluginId);
 
-        System.out.println("[SpeedRunnerVSHunter] Plugin Activé !!");
+        System.out.println(Objects.requireNonNull(getMessagesConfig().getString("Plugin_Enabled")).replace("&", "§"));
     }
 
     @Override
     public void onDisable() {
-        System.out.println("[SpeedRunnerVSHunter] Plugin Désactivé !");
+        System.out.println(Objects.requireNonNull(getMessagesConfig().getString("Plugin_Disabled")).replace("&", "§"));
     }
 
     private boolean setupManager(){
@@ -139,6 +149,29 @@ public class SpeedRunnerVSHunter extends JavaPlugin {
         return (sversion.equals("v1_16_R1") || sversion.equals("v1_16_R2") || sversion.equals("v1_16_R3") || sversion.equals("v1_17_R1") || sversion.startsWith("v1_12"));
     }
 
+    public FileConfiguration getMessagesConfig(){
+        return this.messagesconfig;
+    }
+
+    public File getMessagesFile(){
+        return this.messagesfile;
+    }
+
+    public void createMessagesFile(){
+        messagesfile = new File(getDataFolder(), "messages.yml");
+        if(!messagesfile.exists()){
+            if(!messagesfile.getParentFile().exists()){messagesfile.getParentFile().mkdirs();}
+            saveResource("messages.yml", false);
+        }
+
+        messagesconfig = new YamlConfiguration();
+        try {
+            messagesconfig.load(messagesfile);
+        } catch (IOException | InvalidConfigurationException e){
+            e.printStackTrace();
+        }
+    }
+
     public HashMap<Player, Boolean> getSpeedRunners() {
         return this.speedrunners;
     }
@@ -147,12 +180,21 @@ public class SpeedRunnerVSHunter extends JavaPlugin {
         return this.hunters;
     }
 
+    public List<String> getColoredStringList(List<String> list){
+        List<String> newlist = new ArrayList<>();
+        for(String line : list){
+            newlist.add(line.replace("&", "§"));
+        }
+
+        return newlist;
+    }
+
     public void createInventory(){
-        choixcamp.setItem(3, getItem(Material.SUGAR, 1, (byte)0, "§2§lSpeedRunner", Arrays.asList("", "§7Rejoindre le camp des SpeedRunners"), null, 0, false, null, null));
-        choixcamp.setItem(5, getItem(Material.IRON_SWORD, 1, (byte)0, "§c§lChasseur", Arrays.asList("", "§7Rejoindre le camp des Chasseurs"), null, 0, false, null, null));
+        choixcamp.setItem(3, getItem(Material.SUGAR, 1, (byte)0, Objects.requireNonNull(getMessagesConfig().getString("SpeedRunner_ItemName")).replace("&", "§"), getColoredStringList(getMessagesConfig().getStringList("SpeedRunner_ItemDescription")), null, 0, false, null, null));
+        choixcamp.setItem(5, getItem(Material.IRON_SWORD, 1, (byte)0, Objects.requireNonNull(getMessagesConfig().getString("Hunter_ItemName")).replace("&", "§"), getColoredStringList(getMessagesConfig().getStringList("Hunter_ItemDescription")), null, 0, false, null, null));
 
 
-        ItemStack randomhead = getItem(Material.PLAYER_HEAD, 1, (byte)0, "§6§lCible la Plus Proche", Arrays.asList("", "§7Votre boussole de Chasseur pointera vers","§7le SpeedRunner le Plus Proche de Vous"), null, 0, false, null, null);
+        ItemStack randomhead = getItem(Material.PLAYER_HEAD, 1, (byte)0, Objects.requireNonNull(getMessagesConfig().getString("NearestSpeedRunner_ItemName")).replace("&", "§"), getColoredStringList(getMessagesConfig().getStringList("NearestSpeedRunner_ItemDescription")), null, 0, false, null, null);
 
         SkullMeta playerheadmeta = (SkullMeta) randomhead.getItemMeta();
         /*playerheadmeta.setOwner("Hynity");*/

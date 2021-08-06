@@ -8,6 +8,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import xyz.tozymc.spigot.api.title.TitleApi;
 
+import java.util.Objects;
+
 public class CommandSpeedRunnerVSHunter implements CommandExecutor {
     private final SpeedRunnerVSHunter main;
     
@@ -20,7 +22,7 @@ public class CommandSpeedRunnerVSHunter implements CommandExecutor {
             if(SpeedRunnerVSHunter.needpermission){
                 if(!sender.hasPermission("speedrunnervshunter.player")){
                     do_action = false;
-                    sender.sendMessage("§cTu n'as pas la permission de rejoindre une partie.");
+                    sender.sendMessage(Objects.requireNonNull(main.getMessagesConfig().getString("DontHavePermissionToPlay")).replace("&", "§"));
                 }
             }
 
@@ -29,7 +31,7 @@ public class CommandSpeedRunnerVSHunter implements CommandExecutor {
                     Player player = (Player) sender;
                     player.openInventory(SpeedRunnerVSHunter.choixcamp);
                 } else {
-                    sender.sendMessage("§cSeuls les Joueurs peuvent exécuter cette commande !");
+                    sender.sendMessage(Objects.requireNonNull(main.getMessagesConfig().getString("CommandRequiresToBeAPlayer")).replace("&", "§"));
                 }
             }
         }
