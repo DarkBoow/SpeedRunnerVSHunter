@@ -108,8 +108,6 @@ public class SpeedRunnerVSHunter extends JavaPlugin {
             }
         }
 
-        System.out.println(Objects.requireNonNull(getLanguageConfig().getString("Plugin_Enabled")).replace("&", "§"));
-
         createInventory();
 
         for(World world : Bukkit.getWorlds()){
