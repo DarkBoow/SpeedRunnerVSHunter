@@ -13,6 +13,7 @@ OffGameProtection:
   StartWorldBorder: SpawnRadiusGamerule #Set to -1 to disable or set to SpawnRadiusGamerule to base the border size on your SpawnRadius Gamerule Value
   WorldStartTime: 51 #Set to -1 to disable
   ResetHealthOnStop: true #Disable it if you want to continue a game after restarting your server (the pause option will come in some days)
+  ResetAchievements: true
 GameOptions:
   SpeedRunnersBecomesHuntersAtDeath: false
   #If the option above is set to false, the option below will be checked

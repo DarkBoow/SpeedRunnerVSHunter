@@ -76,6 +76,16 @@ public class CommandSpeedRunnerVSHunter implements CommandExecutor {
                             SpeedRunnerVSHunter.task = new Task(main).runTaskTimer(main, 1L, 1L);
                             Task.isRunning = true;
                         }
+
+                        if(main.getConfig().getBoolean("OffGameProtection.ResetAchievements")){
+                            for(Player speedrunner : main.getSpeedRunners().keySet()){
+                                Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "advancement revoke " + speedrunner.getName() + " everything");
+                            }
+
+                            for(Player hunter : main.getHunters().keySet()){
+                                Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "advancement revoke " + hunter.getName() + " everything");
+                            }
+                        }
                     }
                 } else {
                     sender.sendMessage(Objects.requireNonNull(main.getLanguageConfig().getString("YouCantExecuteThatCommand")).replace("&", "§"));
