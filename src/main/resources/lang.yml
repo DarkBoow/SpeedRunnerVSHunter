@@ -1,5 +1,5 @@
-Plugin_Enabled: "[SpeedRunnerVSHunter] Plugin Activé !!"
-Disable: "[SpeedRunnerVSHunter] Plugin Désactivé !"
+Plugin_Enabled: "Plugin Activé !!"
+Disable: "Plugin Désactivé !"
 
 YouCantExecuteThatCommand: "&cTu n'as pas la permission d'exécuter cette commande."
 CommandRequiresToBeAPlayer: "&cSeuls les Joueurs peuvent exécuter cette commande !"
