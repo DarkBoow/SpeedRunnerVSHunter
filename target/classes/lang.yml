@@ -1,0 +1,131 @@
+Plugin_Enabled: "[SpeedRunnerVSHunter] Plugin Activé !!"
+Disable: "[SpeedRunnerVSHunter] Plugin Désactivé !"
+
+YouCantExecuteThatCommand: "&cTu n'as pas la permission d'exécuter cette commande."
+CommandRequiresToBeAPlayer: "&cSeuls les Joueurs peuvent exécuter cette commande !"
+SpecifiedPlayerDoesNotExist: "&cLe Joueur Spécifié n'Existe Pas !"
+
+DontHavePermissionToPlay: "&cTu n'as pas la permission de rejoindre une partie."
+TheGameHasntStartedYet: "&cLa chasse n'est pas en cours !"
+YouAreNotAHunter: "&cTu n'es pas un Chasseur !"
+
+SpeedRunnerLeavePlayer_ConsoleUsage: "&cUsage Console : &6/speedrunner leave <player>"
+AnOperatorForcedYouToLeaveYourTeam: "&3&l%sender% &ct'a forcé à quitter ton Équipe."
+AnOperatorKickedASpeedRunner: "&b[SpeedRunner] &a%sender% &ca expulsé &6%player% &cde l'Équipe des SpeedRunners."
+AnOperatorKickedAHunter: "&b[SpeedRunner] &a%sender% &ca expulsé &6%player% &cde l'Équipe des Chasseurs."
+ThisTeamDoesNotExist: "&cLe camp spécifié n'existe Pas !"
+
+SpeedRunners_PlayerListName: "&a[SpeedRunner] &r%player%"
+SpeedRunners_PlayerDisplayName: "&a[SpeedRunner] &r%player%"
+Hunters_PlayerListName: "&b[Chasseur] &r%player%"
+Hunters_PlayerDisplayName: "&b[Chasseur] &r%player%"
+
+YouCantLeaveYourTeamBecauseYouAreNotInTheGame: "&cTu n'es dans Aucun Camp."
+TheSpecifiedPlayerCantLeaveHisTeamBecauseHeIsNotInTheGame: "&cLe Joueur Spécifié n'est dans Aucun Camp."
+TheSpecifiedPlayerIsNotOnline: "&cLe Joueur Spécifié N'Est Pas Connecté !"
+YouCantChoseYourSideAnymore: "&cLa chasse a déjà commencé, donc tu ne peux plus choisir ton camp. &cLa seule manière de choisir ton camp est de stopper la chasse."
+
+YouBecameAHunter: "&aTu deviens Chasseur suite à ta Mort !"
+ASpeedRunnerBecomesAHunter: "&b[SpeedRunner] &aLe SpeedRunner &6%player%&a est devenu Chasseur suite à sa Mort !"
+
+YouJoinedTheSpeedRunnersTeam: "&aTu as rejoins l'Équipe des SpeedRunners !"
+SomeoneJoinedTheSpeedRunnerTeam: "&b[SpeedRunner] &6%player% &aa rejoint l'Équipe des SpeedRunners !"
+
+YouJoinedTheHuntersTeam: "&aTu as rejoins l'Équipe des Chasseurs !"
+SomeoneJoinedTheHuntersTeam: "&b[SpeedRunner] &6%player% &aa rejoint l'Équipe des Chasseurs !"
+
+YouLeftTheSpeedRunnersTeam: "&cTu as quitté l'Équipe des SpeedRunners."
+ASpeedRunnerLeftHisTeam: "&b[SpeedRunner] &6%player%&c a quitté l'Équipe des SpeedRunners."
+
+YouLeftTheHuntersTeam: "&cTu as quitté l'Équipe des Chasseurs."
+
+YouAreAlreadyASpeedRunner: "&cTu es déjà SpeedRunner."
+YouAreAlreadyAHunter: "&cTu es déjà Chasseur."
+
+HunterTargetCommandInfo: "&6Exécutes la commande &b/speedrunner cible &6pour choisir une Cible Précise, sinon ta boussole traquera le Joueur le plus proche &2&lQuand tu cliqueras avec &6!"
+YouNeedToChoseAGameFirst: "&cTu dois d'abord exécuter la commande &l/speedrunner cible &cpour choisir ta cible, en raison de ton mode de ciblage."
+
+YouLostTheChase: "&cTu as perdu la chasse, %player%."
+YouWonTheChase: "&6Tu as gagné la chasse, Bravo %player% !"
+
+TheHuntersWonTheGame: "&6&lLa chasse a été gagnée par les Chasseurs !"
+TheSpeedRunnersLost: "&c&lLes SpeedRunners ont Perdu !"
+TheHuntersWon: "&bLes Chasseurs ont Gagné !!"
+
+SpeedRunnersLostBecauseHuntersWon_Title:
+  Title: "&c&lDÉFAITE"
+  SubTitle: "&bLes Chasseurs ont Gagné..."
+  FadeIn: 20
+  Stay: 20
+  FadeOut: 20
+HuntersWonBecauseSpeedRunnersLost_Title:
+  Title: "&6&lVICTOIRE"
+  SubTitle: "&bLes Chasseurs ont Gagné !!"
+  FadeIn: 20
+  Stay: 20
+  FadeOut: 20
+
+SpeedRunnersWonBecauseHuntersLost_Title:
+  Title: "&6&lVICTOIRE"
+  SubTitle: "&bLes SpeedRunners ont Gagné !!"
+  FadeIn: 20
+  Stay: 20
+  FadeOut: 20
+HuntersLostBecauseSpeedRunnersWon_Title:
+  Title: "&c&lDÉFAITE"
+  SubTitle: "&bLes SpeedRunners ont Gagné..."
+  FadeIn: 20
+  Stay: 20
+  FadeOut: 20
+
+TargetNotOnlineAnymore: "§cLe joueur %oldtarget% que tu avais ciblé n'est plus connecté ou n'est plus SpeedRunner !\n&c&lVeille à choisir le mode de ciblage de Proximité ou Pointer un autre SpeedRunner si ton précédent choix ne redevient pas SpeedRunner ! (en faisant un Clic Gauche avec ta Boussole en main)"
+YourCompassPointsTo: "&aTa boussole pointe vers &2&l%target%&a."
+YouCantDropYourLastCompass: "&cTu ne peux pas jeter ta dernière boussole si l'option &3&lDisable_Item_Drop &creste &aActivée &c!"
+
+HuntersTargetModeChangedToRandom: "&bMode de cible changé à &6&lAléatoire &b!"
+HuntersTargetModeAlreadyRandom: "&cMode de cible déjà en &6&lAléatoire &c!"
+TargetAlreadyChosen: "&cTa cible est déjà définie sur &b&l%target% &c!"
+NewSpeedRunnerTargetChosed: "&aTu as défini &2&l%target% &acomme nouvelle cible SpeedRunner !"
+
+SpeedRunnerOutOfTheGame: "&cLe SpeedRunner %player% est maintenant hors course !"
+
+SpeedRunner_ItemName: "&2&lSpeedRunner"
+SpeedRunner_ItemDescription:
+  - ""
+  - "&7Rejoindre le camp des SpeedRunners"
+
+Hunter_ItemName: "&c&lChasseur"
+Hunter_ItemDescription:
+  - ""
+  - "&7Rejoindre le camp des Chasseurs"
+
+
+NearestSpeedRunner_ItemName: "&6&lCible la Plus Proche"
+NearestSpeedRunner_ItemDescription:
+  - ""
+  - "&7Votre boussole de Chasseur pointera vers"
+  - "&7le SpeedRunner le Plus Proche de Vous"
+
+ChoseYourSide_InventoryTitle: "&9&lChoisis ton Camp"
+SpeedRunners_InventoryTitle: "&2&lSpeedRunners"
+
+
+TheGameHasAlreadyBegun: "&cLa chasse a déjà commencé !"
+TheGameHasStarted: "&6&lLa chasse aux SpeedRunners Peut Maintenant &e&lCOMMENCER&6&l..."
+HuntersCompassInfo: "&bVotre boussole de chasseur pointe initialement le SpeedRunner le plus proche de vous.\n&aExécutez la commande &2&l/speedrunner cible &apour modifier votre SpeedRunner cible."
+StartingGameTitle:
+  Title: "&b&lSpeedRunner"
+  SubTitle: "§6La Chasse Peut §e§lCOMMENCER !!"
+  FadeIn: 20
+  Stay: 20
+  FadeOut: 20
+
+NoSpeedRunnerRemains: "&cAucun SpeedRunner n'est encore en course !"
+
+AdminStoppedGame: "&cLa chasse a été stoppée par un &4&lAdministrateur &c!"
+ForceStopGameTitle:
+  Title: "&b&lSpeedRunner"
+  SubTitle: "&cChasse Stoppée par un Admin !"
+  FadeIn: 20
+  Stay: 20
+  FadeOut: 20
