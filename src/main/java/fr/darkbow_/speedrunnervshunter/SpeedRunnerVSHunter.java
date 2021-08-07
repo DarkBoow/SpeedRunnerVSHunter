@@ -73,6 +73,9 @@ public class SpeedRunnerVSHunter extends JavaPlugin {
 
         createLanguageFile();
 
+        speedrunnersinv = Bukkit.createInventory(null, 54, Objects.requireNonNull(getLanguageConfig().getString("SpeedRunners_InventoryTitle")).replace("&", "§"));
+        choixcamp = Bukkit.createInventory(null, 9, Objects.requireNonNull(getLanguageConfig().getString("ChoseYourSide_InventoryTitle")).replace("&", "§"));
+
         this.HashSet = new HashSet<>();
         for(Material mat : Material.values()){
             if(!mat.isSolid()){
@@ -105,8 +108,7 @@ public class SpeedRunnerVSHunter extends JavaPlugin {
             }
         }
 
-        speedrunnersinv = Bukkit.createInventory(null, 54, Objects.requireNonNull(getLanguageConfig().getString("SpeedRunners_InventoryTitle")).replace("&", "§"));
-        choixcamp = Bukkit.createInventory(null, 9, Objects.requireNonNull(getLanguageConfig().getString("ChoseYourSide_InventoryTitle")).replace("&", "§"));
+        System.out.println(Objects.requireNonNull(getLanguageConfig().getString("Plugin_Enabled")).replace("&", "§"));
 
         createInventory();
 
